@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMAListaProductos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp" />
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/fabMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="-1dp"
+        android:elevation="2dp"
+        app:fab_addButtonColorNormal="#E63F3F"
+        app:fab_addButtonColorPressed="#E69393"
+        app:fab_labelStyle="@style/etiqueta"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAgregarProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="agregarProducto"
+            app:fab_colorNormal="#E63F3F"
+            app:fab_colorPressed="#E69393"
+            app:fab_icon="@drawable/ic_fab_productos_24dp"
+            app:fab_title="Producto" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAgregarMovimiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="agregarMovimiento"
+            app:fab_colorNormal="#E63F3F"
+            app:fab_colorPressed="#E69393"
+            app:fab_icon="@drawable/ic_fab_movimiento_24dp"
+            app:fab_title="Movimiento" />
+
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:elevation="2dp"
+        android:onClick="exportDB"
+        android:text="Exportar DB" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/button"
+        android:onClick="importDB"
+        android:text="Importar DB" />
+
+</RelativeLayout>

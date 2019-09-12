@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tIRCantidad"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/item_recycler_esquinas_siii_redondeadas"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="N"
+                android:textColor="#0E0202"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/LL"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@id/tIRCantidad"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tIRNombreProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/item_recycler_esquina_sd_redondeada"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="NOMBRE DE PRODUCTO"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/tIRCodigoProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/item_recycler_esquina_id_redondeada"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:text="CODIGO DE PRODUCTO"
+                    android:textSize="24sp" />
+
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
