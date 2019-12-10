@@ -25,11 +25,11 @@ import static com.example.stocks.ui.MainActivity.listaProductos;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolderItems> {
 
-    //private ArrayList<Producto> listaProductos;
+    private ArrayList<Producto> listaProductosMostrados;
     private Context context;
 
     public RecyclerAdapter(Context context){//ArrayList<Producto> listaProductos){
-        //this.listaProductos = listaProductos;
+        this.listaProductosMostrados = listaProductos;
         this.context = context;
     }
 
@@ -42,7 +42,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolderItems holder, int position) {
-        Producto p = listaProductos.get(position);
+        Producto p = listaProductosMostrados.get(position);
         holder.tCodigo.setText(String.valueOf(p.getCodigo()));
         holder.tNombre.setText(String.valueOf(p.getNombre()));
         holder.tCantidad.setText(String.valueOf(p.getCantidad()));
@@ -50,34 +50,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         int pos = listaLineas.indexOf(new Linea(nombreLinea));
         int color = listaLineas.get(pos).getColor();
         holder.cardView.setCardBackgroundColor(color);
-        if (!listaProductos.isEmpty()) {
-
-
-        }
-        /*holder.cardView.setCardBackgroundColor(listaProdcusto;
-        if (!listaProductos.isEmpty()){
-            String nLinea = listaProductos.get(position).getLinea();
-            Linea linea = new Linea(nLinea);
-            int pos = 0;
-            int i =0;
-            for (Linea l: listaLineas){
-
-                if (l.getNombre() == nLinea){
-                    pos = i;
-                }
-                i++;
-
-            }
-            //int pos = listaLineas.indexOf(linea);
-            Toast.makeText(context, pos, Toast.LENGTH_LONG).show();
-
-        }*/
 
     }
 
     @Override
     public int getItemCount() {
-        return listaProductos.size();
+        return listaProductosMostrados.size();
     }
 
     public class ViewHolderItems extends RecyclerView.ViewHolder {
@@ -97,8 +75,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public void updateList(ArrayList<Producto> listaFiltrada){
-        listaProductos = new ArrayList<>();
-        listaProductos.addAll(listaFiltrada);
+        listaProductosMostrados= new ArrayList<>();
+        listaProductosMostrados.addAll(listaFiltrada);
         notifyDataSetChanged();
 
     }

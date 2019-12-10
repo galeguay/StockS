@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             MenuItem item = buscador.findItem(R.id.buscador);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(this);
-        /*item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+       /* item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
                 return true;
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                adapterRecycler.updateList(Producto);
+                adapterRecycler.updateList(listaProductos);
                 return true;
             }
         });*/
