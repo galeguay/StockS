@@ -13,7 +13,7 @@ public class ActAgregarMovimiento extends AppCompatActivity {
 
     public Button bCompra;
     public Button bVenta;
-    public Button bPedido;
+    public Button bPrestamo;
     public Button bDevolucion;
     public static Activity fa;
 
@@ -27,7 +27,7 @@ public class ActAgregarMovimiento extends AppCompatActivity {
         //inicializando views
         bCompra = (Button) findViewById(R.id.bCompra);
         bVenta = (Button) findViewById(R.id.bVenta);
-        bPedido = (Button) findViewById(R.id.bPrestamo);
+        bPrestamo = (Button) findViewById(R.id.bPrestamo);
         bDevolucion = (Button) findViewById(R.id.bDevolucion);
 
     }
@@ -37,10 +37,15 @@ public class ActAgregarMovimiento extends AppCompatActivity {
         Intent intentAgregarCompra = new Intent(this, ActAgregarCompra.class);
         startActivity(intentAgregarCompra);
     }
-/*
+
     public void agregarVenta(View view){
         Intent intentAgregarVenta = new Intent(this, ActAgregarVenta.class);
         startActivity(intentAgregarVenta);
-    }*/
+    }
+
+    public void agregarPrestamo(View view){
+        Intent intentAgregarPrestamo = new Intent(this, ActAgregarPrestamo.class);
+        startActivity(intentAgregarPrestamo);
+    }
 
 }

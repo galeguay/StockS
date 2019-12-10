@@ -1,8 +1,7 @@
 package com.example.stocks.ui;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,65 +14,80 @@ import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.stocks.MyAplication;
 import com.example.stocks.R;
 import com.example.stocks.model.AdminDb;
 import com.example.stocks.model.Data.*;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Tabla;
+import com.example.stocks.model.InsertDataOnDb;
 
 import java.util.ArrayList;
 
 import static com.example.stocks.ui.MainActivity.listaProductos;
-import static com.example.stocks.model.Contract.*;
-
 
 public class ActAgregarCompra extends AppCompatActivity {
 
     private AdminDb adminDb;
     private TableLayout tableLayoutAAC1;
     private Tabla tablaResumen;
-    public EditText editCantidad, editMonto, editPersona, editComentario;
-    private AutoCompleteTextView autoCNombreP;
-    private AutoCompleteTextView autoCCodigoP;
-    private ArrayList<String> arrayCodigosP;
-    private ArrayList<String> arrayNombresP;
-    public ArrayList<String[]> buffer;
+    private EditText editCantidad, editMonto, editPersona, editComentario;
+    private AutoCompleteTextView autoCNombreP, autoCCodigoP;
+    private ArrayList<String> arrayCodigosP, arrayNombresP;
+    private ArrayList<Compra> listaCompras;
+    private String[] header;
+    private InsertDataOnDb insertDataOnDb;
+    private Button buttonRegistrarCompra;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_agregar_compra);
 
+        //ocultando actionBar
         getSupportActionBar().hide();
-        //creando admin database
-        adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
 
-        //inicializando views
-        TextView tAgregarCompra = (TextView) findViewById(R.id.tAgregarCompra);
-        tableLayoutAAC1 = (TableLayout) findViewById(R.id.tableLayoutAAC1);
-        autoCNombreP = (AutoCompleteTextView) findViewById(R.id.ACautoCompleteNombreProducto);
-        autoCCodigoP = (AutoCompleteTextView) findViewById(R.id.autoCCodigoProducto);
-        editCantidad = (EditText) findViewById(R.id.editCantidad);
-        editMonto = (EditText) findViewById(R.id.editMonto);
-        Button buttonAgregar = (Button) findViewById(R.id.bAgregar);
-        Button buttonFinalizar = (Button) findViewById(R.id.bFinalizar);
+        //inicializando admin de base de datos
+        //adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
+        insertDataOnDb = new InsertDataOnDb();
 
-        //inicializando variables
-        buffer = new ArrayList<>();
+        //CARGANDO VIEWS
+        TextView tAgregarCompra = (TextView) findViewById(R.id.AC_text_agregarCompra);
+        tableLayoutAAC1 = (TableLayout) findViewById(R.id.AC_tableL_resumen);
+        autoCNombreP = (AutoCompleteTextView) findViewById(R.id.AC_autoC_nombreProducto);
+        autoCCodigoP = (AutoCompleteTextView) findViewById(R.id.AC_autoC_codigoProducto);
+        editCantidad = (EditText) findViewById(R.id.AC_edit_cantidad);
+        editMonto = (EditText) findViewById(R.id.AC_edit_monto);
+        Button buttonAgregar = (Button) findViewById(R.id.AC_button_agregar);
+        Button buttonLimpiarCampos = (Button) findViewById(R.id.AC_button_limpiarCampos);
+        Button buttonLimpiarResumen = (Button) findViewById(R.id.AC_button_limpiarResumen);
+        buttonRegistrarCompra = (Button) findViewById(R.id.AC_button_registrar);
+        buttonRegistrarCompra.setEnabled(false);
+        //inicializando tabla
+        header = new String[]{"Producto", "Cantidad", "Monto x uni"};
+        tablaResumen = new Tabla(this, tableLayoutAAC1, "RESUMEN DE COMPRA", header);
 
-        //inicializando cabecera de tabla
-        String[] header= {"Cantidad", "Monto x uni", "Producto"};
-        tablaResumen = new Tabla(this, tableLayoutAAC1,"RESUMEN DE COMPRA", header);
-
-        //cargando arrays nombres y codigos para autoCompletes
+        //INICIALIZANDO VARIABLES
+        listaCompras = new ArrayList<Compra>();
         arrayCodigosP = new ArrayList<String>();
         arrayNombresP = new ArrayList<String>();
-        getArraysProductos(arrayCodigosP, arrayNombresP);
 
+        //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
+        //cargando arrays
+        getArraysProductos(arrayCodigosP, arrayNombresP);
+        //configurando autoCompleteCodigo
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosP);
+        autoCCodigoP.setAdapter(adapterCodigos);
+        //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el codigo correspondiente en el autoCompleteNombre
+        autoCCodigoP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int n = arrayCodigosP.indexOf(autoCCodigoP.getText().toString());
+                autoCNombreP.setText(arrayNombresP.get(n));
+            }
+        });
         //configurando autoCompleteNombre
-        ArrayAdapter<String> adapter1= new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, arrayNombresP);
-        autoCNombreP.setAdapter(adapter1);
+        ArrayAdapter<String> adapterNombres = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresP);
+        autoCNombreP.setAdapter(adapterNombres);
         //al seleccionar un elemento en el autoCompleteNombre, se complete automaticamente el nombre correspondiente en el autoCompleteCodigo
         autoCNombreP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -82,42 +96,12 @@ public class ActAgregarCompra extends AppCompatActivity {
                 autoCCodigoP.setText(arrayCodigosP.get(n));
             }
         });
-
-        //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapter2= new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item, arrayCodigosP);
-        autoCCodigoP.setAdapter(adapter2);
-        //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el nombre correspondiente en el autoCompleteNombre
-        autoCCodigoP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int n = arrayCodigosP.indexOf(autoCCodigoP.getText().toString());
-                autoCNombreP.setText(arrayNombresP.get(n));
-            }
-        });
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getArraysProductos(arrayCodigosP, arrayNombresP);
-
-
     }
 
     //PROCEDIMIENTO AL PRESIONAR BOTON "AGREGAR A RESUMEN"
-    public void agregarMovimientoATabla(View view){
+    public void agregarCompraAResumen(View view){
 
         Fecha fecha = new Fecha();
-/*      Compra compra = new Compra(-1,
-                Integer.parseInt(autoCCodigoP.getText().toString()),
-                fecha.getLong(),
-                Integer.parseInt(editCantidad.getText().toString()),
-                Double.parseDouble(editMonto.getText().toString())
-        );*/
-
-        //agregando compra al buffer preEscrituraDb
-        //formato String[] {fecha, codProducto, cantidad, monto}
 
         if (autoCCodigoP.getText().toString().isEmpty()){
 
@@ -133,72 +117,57 @@ public class ActAgregarCompra extends AppCompatActivity {
 
         } else {
 
-            String[] newData = {String.valueOf(fecha.getLong()), autoCCodigoP.getText().toString(), editCantidad.getText().toString(), editMonto.getText().toString()};
-            Toast.makeText(getApplicationContext(), "newsdsd", Toast.LENGTH_LONG).show();
-            buffer.add(newData);
+            if (editMonto.getText().toString().isEmpty()){
+                editMonto.setText("-1");
+            }
+
+            //agregando compra a bdd
+            Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoP.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()));
+            listaCompras.add(nuevaCompra);
 
             //agregando compra a tabla resumen (en pantalla)
-            if (editMonto.getText().toString().isEmpty()){
+            if (editMonto.getText().toString() == "-1"){
 
                 String[] row = {editCantidad.getText().toString(), "-", autoCNombreP.getText().toString()};
                 tablaResumen.addRow(row);
 
             }else{
 
-                    String[] row = {editCantidad.getText().toString(), editMonto.getText().toString(), autoCNombreP.getText().toString()};
-                    tablaResumen.addRow(row);
+                String[] row = {editCantidad.getText().toString(), editMonto.getText().toString(), autoCNombreP.getText().toString()};
+                tablaResumen.addRow(row);
             }
-
 
             //limpiando views
             autoCCodigoP.setText("");
             autoCNombreP.setText("");
             editCantidad.setText("");
             editMonto.setText("");
-        }
+
+            buttonRegistrarCompra.setEnabled(true);
+            }
     }
 
-    //PROCEDIMIENTO BOTON REGISTRAR COMPRA
-    public void altaMovimientos(View view){
-        SQLiteDatabase db= adminDb.getWritableDatabase();
-
-        //creando y cargando contenedor de valores
-        ContentValues dataProducto = new ContentValues();
-        ContentValues dataCompra = new ContentValues();
-        ContentValues dataMovimiento = new ContentValues();
-
-        for (int i = 0; i < buffer.size(); i++) {
-
-            //dataCompra.put(C_ID_PRODUCTO, Integer.parseInt(buffer.get(i)[1]));
-            int nmid=((MyAplication) this.getApplicationContext()).getNMId();
-            dataCompra.put(C_ID_MOVIMIENTO, nmid);
-            dataCompra.put(C_CANTIDAD, Integer.parseInt(buffer.get(i)[2]));
-            dataCompra.put(C_MONTO, Double.parseDouble(buffer.get(i)[3]));
-            db.insert(TABLA_COMPRAS,null,dataCompra);
-
-            dataMovimiento.put(C_ID_PRODUCTO, Integer.parseInt(buffer.get(i)[1]));
-            dataMovimiento.put(C_FECHA, Long.parseLong(buffer.get(i)[0]));
-            db.insert(TABLA_MOVIMIENTOS, null, dataMovimiento);
-
-            String comando = ("UPDATE "+TABLA_PRODUCTOS+" SET "+C_CANTIDAD+" = "+C_CANTIDAD+" + "+buffer.get(i)[2]+" WHERE "+ C_ID_PRODUCTO +" = "+ buffer.get(i)[1]);
-            db.execSQL(comando);
-
-            //dataProducto.put(C_CANTIDAD, Integer.parseInt(listaProductos.get));
-
-        }
-
-        //String comando = ("UPDATE "+TABLA_PRODUCTOS+" SET "+C_CANTIDAD+" = "+C_CANTIDAD+" + "+ );
-        //db.execSQL(
-        //db.update(TABLA_PRODUCTOS,dataProducto,);
-        db.close();
-        ActAgregarMovimiento.fa.finish();
-        this.finish();
+    //PROCEDIMIENTO BOTON LIMPIAR CAMPOS
+    public void limpiarCampos(View view){
+        autoCCodigoP.setText("");
+        autoCNombreP.setText("");
+        editCantidad.setText("");
+        editMonto.setText("");
+        Toast.makeText(this,"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
     }
 
     //PROCEDIMIENTO BOTON DE AGREGAR PRODUCTO (+)
     public void agregarProducto(View view){
         Intent intentAgregarProducto= new Intent(this, ActAgregarProducto.class);
         startActivity(intentAgregarProducto);
+    }
+
+    //PROCEDIMIENTO BOTON LIMPIAR RESUMEN
+    public void limpiarResumen(View view){
+        listaCompras.clear();
+        tablaResumen.removeAllViews();
+        buttonRegistrarCompra.setEnabled(false);
+        Toast.makeText(this,"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
     }
 
     //PROCEDIMIENTO Q CARGA LOS ARREGLOS PASADOS CON LOS NOMBRES Y CODIGOS DE LOS PRODUCTOS EN LA BDD
@@ -210,5 +179,15 @@ public class ActAgregarCompra extends AppCompatActivity {
             arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
             arrayNombresProductos.add(producto.getNombre());
         }
+    }
+
+    //PROCEDIMIENTO BOTON REGISTRAR COMPRA
+    public void registrarCompra(View view){
+
+        insertDataOnDb.insertCompra(this.getApplicationContext(), listaCompras);
+        Toast.makeText(this,"La compra se registró correctamente",Toast.LENGTH_LONG).show();
+        ActAgregarMovimiento.fa.finish();
+        this.finish();
+
     }
 }

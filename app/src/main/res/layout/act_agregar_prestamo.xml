@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    tools:context=".ui.ActAgregarPrestamo">
+
+    <TextView
+        android:id="@+id/AP_text_titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:text="AGREGAR PRESTAMO"
+        android:textColor="#030000"
+        android:textSize="24dp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="clip_vertical|center_vertical"
+            android:onClick="onRadioButtonClicked"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/AP_radioB_PrestamoPedido"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prestamo PEDIDO" />
+
+            <RadioButton
+                android:id="@+id/AP_radioB_PrestamoDado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Prestamo DADO" />
+        </RadioGroup>
+
+        <AutoCompleteTextView
+            android:id="@+id/AP_autoC_codigoProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Código del producto"
+            android:inputType="number"
+            android:maxLength="8" />
+
+        <AutoCompleteTextView
+            android:id="@+id/AP_autoC_nombreProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Nombre del producto" />
+
+        <EditText
+            android:id="@+id/AP_edit_cantidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Cantidad"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/AP_edit_socia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Socia"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/AP_button_agregarPrestamo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:onClick="agregarPrestamo"
+            android:text="AGREGAR PRESTAMO" />
+
+    </LinearLayout>
+
+</RelativeLayout>

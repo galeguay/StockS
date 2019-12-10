@@ -10,7 +10,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
-        <activity android:name=".ui.ActAgregarVenta"></activity>
+        <activity android:name=".ui.ActAgregarLinea"></activity>
+        <activity android:name=".ui.ActAgregarPrestamo" />
+        <activity android:name=".ui.ActAgregarVenta" />
         <activity android:name=".ui.ActAgregarProducto" />
         <activity android:name=".ui.ActAgregarCompra" />
         <activity

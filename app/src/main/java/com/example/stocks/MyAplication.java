@@ -13,20 +13,19 @@ import static com.example.stocks.model.Contract.TABLA_MOVIMIENTOS;
 
 public class MyAplication extends Application {
 
-    private int LMId;
+    private int LastMId;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        LMId = 0;
-        setLMI();
-        Toast.makeText(this,String.valueOf(getLMId()), Toast.LENGTH_LONG).show();
-
+        LastMId = 0;
+        setLastMId();
 
     }
 
     //CARGA DEL ULTIMO ID DE MOVIMIENTOS
-    public void setLMI(){
+    public void setLastMId(){
 
         AdminDb adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
         SQLiteDatabase db = adminDb.getReadableDatabase();
@@ -37,34 +36,36 @@ public class MyAplication extends Application {
 
             Cursor cursor = db.query(TABLA_MOVIMIENTOS, columnas,null, null, null, null, null);
 
-            if (cursor != null && !cursor.isClosed()){
-                cursor.moveToLast();
-                LMId = cursor.getInt(0);
+            if (cursor.moveToLast()){//(cursor != null && !cursor.isClosed()){
+                //cursor.moveToLast();
+                LastMId = cursor.getInt(0);
+                Toast.makeText(getApplicationContext(), LastMId, Toast.LENGTH_LONG).show();
+
             }
         }catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error al cargar LMId", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Error al cargar LastMId", Toast.LENGTH_LONG).show();
         }
 
         db.close();
     }
 
     //modifica EL ID DEL ULTIMO MOVIMIENTO AGREGADO
-    public void setLMId(int lmi){
-        this.LMId = lmi;
+    public void setLastMId(int lmi){
+        this.LastMId = lmi;
     }
 
     //DEVUELVE EL ID DEL ULTIMO MOVIMIENTO AGREGADO
-    public int getLMId(){
+    public int getLastMId(){
 
-        return LMId;
+        return LastMId;
     }
 
     //DEVUELVE EL PROXIMO ID DE LA TABLA DE MOVIMIENTO DE LA BD (AUMENTA EN 1 EL LMI)
-    public int getNMId(){
+    public int getNextMId(){
 
-        LMId = LMId+1;
+        LastMId = LastMId +1;
 
-        return LMId;
+        return LastMId;
     }
 
 }

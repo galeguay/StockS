@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.stocks.R;
 import com.example.stocks.model.AdminDb;
+import com.example.stocks.model.Data.Linea;
 import com.example.stocks.model.Data.Producto;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Tabla;
@@ -37,18 +38,23 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import static com.example.stocks.model.Contract.*;
-
+/*
+CAMBIOS EN PRUEBA
+desactive constructor de objeto Linea(idLinea)
+ */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
-    private RecyclerView recyclerProductos;
+    public static ArrayList<Linea> listaLineas;
     public static ArrayList<Producto> listaProductos;
     public static RecyclerAdapter adapterRecycler;
+    private RecyclerView recyclerProductos;
     private TableLayout tableLayout1;
     private AdminDb adminDb;
     private Tabla tabla;
     private int permissionWrite;
     private static final int MY_PERMISSIONS_WRITE_EXTERNAL = 1;
     private static final int MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 1;
+    private int aux;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +64,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //INICIA EL ADMINISTRADOR DE BASE DE DATOS
         adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
         listaProductos = new ArrayList<>();
-        cargarListaProductos();
+        listaLineas = new ArrayList<>();
 
+        cargarListaLineas();
+        cargarListaProductos();
+        Toast.makeText(this, String.valueOf(aux),Toast.LENGTH_LONG).show();
 
         //INICIALIZANDO VIEWS
         recyclerProductos = (RecyclerView)findViewById(R.id.rvMAListaProductos);
@@ -69,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         final FloatingActionButton fabAgregarProducto = (FloatingActionButton) findViewById(R.id.fabAgregarProducto);
 
         //CARGANDO CONTENIDO DE RECYCLERVIEW
-        adapterRecycler = new RecyclerAdapter(listaProductos);
+        adapterRecycler = new RecyclerAdapter(this.getApplicationContext());//listaProductos);
         recyclerProductos.setAdapter(adapterRecycler);
 
 
@@ -89,22 +98,55 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapterRecycler.notifyDataSetChanged();
+
+    }
+
+    public void cargarListaLineas(){
+
+        SQLiteDatabase db = adminDb.getReadableDatabase();
+
+        long registros = DatabaseUtils.longForQuery(db,"SELECT COUNT(*) FROM "+ TABLA_LINEAS,null);
+        String registro = String.valueOf(registros);
+        String[] campos= {C_ID_LINEA, C_NOMBRE_LINEA, C_COLOR};
+
+        try {
+            Cursor cursor = db.query(TABLA_LINEAS, campos, null, null, null, null, null);
+            if (cursor.moveToFirst()) {
+
+                listaLineas.add(new Linea(cursor.getInt(0), cursor.getString(1), cursor.getInt(2)));
+                aux = cursor.getInt(2);
+                while (cursor.moveToNext()) {
+                    listaLineas.add(new Linea(cursor.getInt(0), cursor.getString(1), cursor.getInt(2)));
+                }
+
+            }
+        }catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error al cargar lista de líneas", Toast.LENGTH_LONG).show();
+        }
 
 
-    //CARGA "ARRAYLIST<PRODUCTO> listaProductos" CON LOS PRODUCTOS QUE SE ENCUENTRAN EN LA BASE DE DATOS
+    }
+
+    //CARGA "ARRAYLIST<PRODUCTO> Producto" CON LOS PRODUCTOS QUE SE ENCUENTRAN EN LA BASE DE DATOS
     public void cargarListaProductos(){
         SQLiteDatabase db = adminDb.getReadableDatabase();
 
         long registros = DatabaseUtils.longForQuery(db,"SELECT COUNT(*) FROM "+ TABLA_PRODUCTOS,null);
         String registro = String.valueOf(registros);
-        String[] campos= {C_ID_PRODUCTO, C_NOMBRE, C_CANTIDAD, C_LINEA,};
+        String[] campos= {C_ID_PRODUCTO, C_NOMBRE, C_CANTIDAD, C_NOMBRE_LINEA};
 
         try {
             Cursor cursor = db.query(TABLA_PRODUCTOS, campos, null, null, null, null, null);
-            cursor.moveToFirst();
-            listaProductos.add(new Producto(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
-            while (cursor.moveToNext()) {
+            if (cursor.moveToFirst()) {
                 listaProductos.add(new Producto(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
+
+                while (cursor.moveToNext()) {
+                    listaProductos.add(new Producto(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
+                }
             }
         }catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error al cargar lista de productos", Toast.LENGTH_LONG).show();
@@ -126,10 +168,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     //CREANDO MENU DE OPCIONES
-    public boolean onCreateOptionsMenu (Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_buscador,menu);
+    public boolean onCreateOptionsMenu (Menu buscador) {
+        getMenuInflater().inflate(R.menu.menu_buscador,buscador);
 
-        MenuItem item = menu.findItem(R.id.buscador);
+            MenuItem item = buscador.findItem(R.id.buscador);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(this);
         /*item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
@@ -140,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                adapterRecycler.updateList(listaProductos);
+                adapterRecycler.updateList(Producto);
                 return true;
             }
         });*/
@@ -155,15 +197,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String busqueda) {
-        busqueda = busqueda.toLowerCase();
+
         ArrayList<Producto> listaFiltrada = new ArrayList<>()   ;
 
         try{
-                //ArrayList<Producto> listaFiltrada = filtrar(listaProductos, busqueda);
+                //ArrayList<Producto> listaFiltrada = filtrar(Producto, busqueda);
                 for(Producto producto: listaProductos){
                     String nombreProducto = producto.getNombre().toLowerCase();
                     String codigoProducto = String.valueOf(producto.getCodigo()).toLowerCase();
-                    if (nombreProducto.contains(busqueda) || codigoProducto.contains(busqueda)){
+                    if (nombreProducto.contains(busqueda.toLowerCase()) || codigoProducto.contains(busqueda.toLowerCase())){
                         listaFiltrada.add(producto);
                     }
                 adapterRecycler.updateList(listaFiltrada);
@@ -176,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         return true;
     }
-
 
     //PROCEDIMIENTO DEL BOTON EXPORTAR DB
     public void exportDB(View view) {
@@ -273,6 +314,5 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
     }
-
 
 }

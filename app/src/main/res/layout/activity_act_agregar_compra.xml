@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="clip_horizontal"
+    android:gravity="center_horizontal"
     tools:context=".ui.ActAgregarCompra">
 
     <ScrollView
@@ -14,23 +14,24 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent "
+            android:layout_height="match_parent"
             android:layout_marginStart="-5dp"
             android:layout_marginEnd="-1dp"
             android:gravity="center|top"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tAgregarCompra"
+                android:id="@+id/AC_text_agregarCompra"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="AGREGAR VENTA"
+                android:text="AGREGAR COMPRA"
                 android:textAllCaps="true"
                 android:textColor="#030000"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -41,24 +42,18 @@
                 android:layout_marginTop="16dp">
 
                 <AutoCompleteTextView
-                    android:id="@+id/autoCCodigoProducto"
+                    android:id="@+id/AC_autoC_codigoProducto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
+                    android:layout_centerInParent="true"
                     android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="0dp"
                     android:hint="Codigo del producto"
                     android:inputType="number"
-                    android:singleLine="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.497"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/scrollAAC1" />
+                    android:maxLength="8"
+                    android:singleLine="true" />
 
                 <Button
-                    android:id="@+id/AACbAgregarProducto"
+                    android:id="@+id/AC_button_agregarProducto"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_alignParentRight="true"
@@ -68,7 +63,7 @@
             </RelativeLayout>
 
             <AutoCompleteTextView
-                android:id="@+id/ACautoCompleteNombreProducto"
+                android:id="@+id/AC_autoC_nombreProducto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -78,10 +73,10 @@
                 android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/autoCCodigoProducto" />
+                app:layout_constraintTop_toBottomOf="@+id/AV_autoC_codigoProducto" />
 
             <EditText
-                android:id="@+id/editCantidad"
+                android:id="@+id/AC_edit_cantidad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -90,73 +85,73 @@
                 android:ems="10"
                 android:hint="Cantidad"
                 android:inputType="number"
+                android:maxLength="2"
                 android:singleLine="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ACautoCompleteNombreProducto" />
+                app:layout_constraintTop_toBottomOf="@+id/AV_autoC_codigoProducto" />
 
             <EditText
-                android:id="@+id/editMonto"
+                android:id="@+id/AC_edit_monto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
                 android:ems="10"
                 android:hint="Monto"
                 android:inputType="numberDecimal"
-                android:singleLine="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editCantidad" />
+                android:singleLine="true" />
 
             <Button
-                android:id="@+id/bAgregar"
+                android:id="@+id/AC_button_agregar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:onClick="agregarMovimientoATabla"
+                android:onClick="agregarCompraAResumen"
                 android:text="AGREGAR A RESUMEN"
-                app:layout_constraintTop_toBottomOf="@+id/editMonto"
+                app:layout_constraintTop_toBottomOf="@+id/AV_edit_monto"
                 tools:layout_editor_absoluteX="161dp" />
 
-            <ScrollView
-                android:id="@+id/scrollAAC1"
+            <TableLayout
+                android:id="@+id/AC_tableL_resumen"
                 android:layout_width="match_parent"
-                android:layout_height="195dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:background="#FDDCDC"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tAgregarCompra">
+                android:layout_height="match_parent"
+                android:background="#ECECEC" />
 
-                <TableLayout
-                    android:id="@+id/tableLayoutAAC1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-                    <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="left" />
-                </TableLayout>
-            </ScrollView>
+                <Button
+                    android:id="@+id/AC_button_limpiarCampos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:background="#EDEE7474"
+                    android:onClick="limpiarCampos"
+                    android:text="Limpiar campos" />
+
+                <Button
+                    android:id="@+id/AC_button_limpiarResumen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_weight="1"
+                    android:background="#EDEE7474"
+                    android:onClick="limpiarResumen"
+                    android:text="Limpiar Resumen" />
+            </LinearLayout>
 
             <Button
-                android:id="@+id/bFinalizar"
+                android:id="@+id/AC_button_registrar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="99dp"
-                android:layout_marginEnd="141dp"
-                android:layout_marginBottom="50dp"
-                android:foregroundGravity="center_vertical"
-                android:gravity="center_horizontal"
-                android:onClick="altaMovimientos"
-                android:text="REGISTRAR COMPRA"
-                tools:layout_editor_absoluteX="161dp" />
+                android:layout_marginTop="20dp"
+                android:onClick="registrarCompra"
+                android:text="REGISTRAR COMPRA" />
+
 
         </LinearLayout>
     </ScrollView>

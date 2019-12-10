@@ -29,7 +29,8 @@ public class Tabla {
     public Tabla(Context context, TableLayout tableLayout, String title, String[] header){
         this.context = context;
         this.tableLayout = tableLayout;
-        addTitle(title);
+        this.title = title;
+        addTitle(this.title);
         isTitleEmpty = false;
         this.header = header;
         filas = 0;
@@ -135,7 +136,7 @@ public class Tabla {
     public void removeAllViews(){
         tableLayout.removeAllViews();
         if (!isTitleEmpty){
-            addTitle(title);
+            addTitle(this.title);
         }
         addHeader();
     }
