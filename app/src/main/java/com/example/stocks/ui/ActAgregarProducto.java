@@ -63,6 +63,7 @@ public class ActAgregarProducto extends AppCompatActivity {
         //carga arrayLineas
         arrayLineas = new ArrayList<>();
         if (!listaLineas.isEmpty()) {
+            arrayLineas.add("Ninguna");
             for (Linea l : listaLineas) {
 
                 arrayLineas.add(l.getNombre());
@@ -91,25 +92,26 @@ public class ActAgregarProducto extends AppCompatActivity {
     public void agregarProducto(View view) {
 
         //     PONER IF SI ESTA ALGUN CAMPO VACIO !!!
+        if (!spinnerLinea.getSelectedItem().toString().equals("Ninguna")) {
+            //agregando producto al arraylist principal
+            Producto p = new Producto(Integer.parseInt(editCodigo.getText().toString()), editNombre.getText().toString(), Integer.parseInt(editCantidad.getText().toString()), spinnerLinea.getSelectedItem().toString());
 
-        //agregando producto al arraylist principal
-        Producto p = new Producto(Integer.parseInt(editCodigo.getText().toString()), editNombre.getText().toString(), Integer.parseInt(editCantidad.getText().toString()), spinnerLinea.getSelectedItem().toString());
+            if (listaProductos.indexOf(p) == -1) {
 
-        if (listaProductos.indexOf(p) == -1) {
+                listaProductos.add(p);
+                adapterRecycler.notifyItemInserted(listaProductos.size() - 1);
 
-            listaProductos.add(p);
-            adapterRecycler.notifyItemInserted(listaProductos.size() - 1);
+                //insertando producto en bdd
+                InsertDataOnDb insertDataOnDb = new InsertDataOnDb();
+                insertDataOnDb.insertProducto(this.getApplicationContext(), editCodigo.getText().toString(), editNombre.getText().toString(), editCantidad.getText().toString(), spinnerLinea.getSelectedItem().toString());
+                Toast.makeText(getApplicationContext(), "EL PRODUCTO SE AGREGÓ CORRECTAMENTE", Toast.LENGTH_LONG).show();
+                finish();
 
-            //insertando producto en bdd
-            InsertDataOnDb insertDataOnDb = new InsertDataOnDb();
-            insertDataOnDb.insertProducto(this.getApplicationContext(), editCodigo.getText().toString(), editNombre.getText().toString(), editCantidad.getText().toString(), spinnerLinea.getSelectedItem().toString());
-            Toast.makeText(getApplicationContext(), "EL PRODUCTO SE AGREGÓ CORRECTAMENTE", Toast.LENGTH_LONG).show();
-            finish();
+            } else {
 
-        } else {
+                Toast.makeText(this.getApplicationContext(), "El producto ya está registrado o tiene el mismo código que otro", Toast.LENGTH_LONG).show();
 
-            Toast.makeText(this.getApplicationContext(), "El producto ya está registrado o tiene el mismo código que otro", Toast.LENGTH_LONG).show();
-
+            }
         }
 
     }

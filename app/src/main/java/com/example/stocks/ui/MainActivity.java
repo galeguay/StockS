@@ -39,8 +39,14 @@ import java.util.ArrayList;
 
 import static com.example.stocks.model.Contract.*;
 /*
-CAMBIOS EN PRUEBA
-desactive constructor de objeto Linea(idLinea)
+ULTIMOS CAMBIOS
+
+-desactive constructor de objeto Linea(idLinea)
+-mejoras en activity agregar linea
+-chequeo de duplicado al agregar una linea nueva
+
+
+
  */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -174,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             MenuItem item = buscador.findItem(R.id.buscador);
         SearchView searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(this);
-       /* item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem menuItem) {
                 return true;
@@ -185,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 adapterRecycler.updateList(listaProductos);
                 return true;
             }
-        });*/
+        });
 
         return true;
     }
@@ -201,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ArrayList<Producto> listaFiltrada = new ArrayList<>()   ;
 
         try{
-                //ArrayList<Producto> listaFiltrada = filtrar(Producto, busqueda);
                 for(Producto producto: listaProductos){
                     String nombreProducto = producto.getNombre().toLowerCase();
                     String codigoProducto = String.valueOf(producto.getCodigo()).toLowerCase();

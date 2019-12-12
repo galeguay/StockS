@@ -6,159 +6,193 @@
     android:layout_height="match_parent"
     tools:context=".ui.ActAgregarLinea">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal|top"
-        android:orientation="vertical"
-        android:scrollbars="vertical"
-        tools:layout_editor_absoluteX="243dp"
-        tools:layout_editor_absoluteY="262dp">
+        tools:layout_editor_absoluteY="64dp">
 
-        <TextView
-            android:id="@+id/AL_text_Titulo"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:text="AGREGAR LINEA"
-            android:textColor="#000000"
-            android:textSize="24dp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:gravity="clip_vertical|center_horizontal"
+            android:orientation="vertical"
+            android:scrollbars="horizontal">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/AL_text_Titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="AGREGAR LINEA"
+                android:textColor="#000000"
+                android:textSize="24dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/AL_edit_nombreLinea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:ems="10"
+                android:hint="Nombre de línea"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text="SELECCIONE EL COLOR"
+                android:textColor="#050000"
+                android:textColorHighlight="#130101"
+                android:textStyle="bold" />
+
+            <androidx.gridlayout.widget.GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                app:columnCount="4">
+
+                <Button
+                    android:id="@+id/AL_button_verdeAgua"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#00bfa5"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_rosa"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#FFA196"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_celeste"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#2196F3"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_terra"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#434d4b"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_verdeClaro"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#00bb2d"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_magenta"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#FF4081"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_azul"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#25379B"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_naranja"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#F55B2A"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_verdeOscuro"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#017033"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_cerezo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#9f021e"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_negro"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#000000"
+                    android:onClick="botonColores" />
+
+                <Button
+                    android:id="@+id/AL_button_amarillo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="#ffff00"
+                    android:onClick="botonColores" />
+
+            </androidx.gridlayout.widget.GridLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/AL_edit_nombreLinea"
+                    android:id="@+id/AL_edit_colorPersonalizado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Nombre de línea"
+                    android:hint="Codigo color (opcional)"
                     android:inputType="textPersonName" />
 
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="16dp"
-                        android:orientation="vertical"
-                        android:scrollbars="horizontal">
-
-                        <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="SELECCIONE EL COLOR"
-                            android:textStyle="bold" />
-
-                        <RadioGroup
-                            android:id="@+id/AL_radioGroup_colores"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:onClick="onRadioButtonClicked">
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_verdeAgua"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#00bfa5" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_cerezo"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#9f021e" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_terra"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#434d4b" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_rosa"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#fcbcb4" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_negro"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#000000" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_verdeClaro"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#00bb2d" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_celeste"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#51d1f6" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_azul"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#0000ff"
-                                android:gravity="start|center_vertical" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_amarillo"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:background="#ffff00" />
-
-                            <RadioButton
-                                android:id="@+id/AL_radioButton_personalizado"
-                                android:layout_width="match_parent"
-                                android:layout_height="50dp"
-                                android:text="Personalizado" />
-
-                        </RadioGroup>
-
-                        <EditText
-                            android:id="@+id/AL_edit_colorPersonalizado"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:hint="Codigo color personalizado"
-                            android:inputType="textPersonName" />
-
-                        <Button
-                            android:id="@+id/button3"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:onClick="check"
-                            android:text="Button" />
-
-                        <Button
-                            android:id="@+id/AL_button_registrarLinea"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:onClick="registrarLinea"
-                            android:text="REGISTRAR LINEA" />
-                    </LinearLayout>
-                </ScrollView>
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="colorPersonalizado"
+                    android:text="Aplicar" />
 
             </LinearLayout>
-        </ScrollView>
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_horizontal"
+                android:text="COLOR SELECCIONADO"
+                android:textColor="#110000"
+                android:textColorHighlight="#090000"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/AL_text_muestraColor"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/AL_button_registrarLinea"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:onClick="registrarLinea"
+                android:text="REGISTRAR LINEA"
+                tools:layout_marginBottom="24dp" />
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
