@@ -22,6 +22,9 @@ public class ActAgregarMovimiento extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_agregar_movimiento);
 
+        //ocultando actionBar
+        getSupportActionBar().hide();
+
         fa=this;
 
         //inicializando views

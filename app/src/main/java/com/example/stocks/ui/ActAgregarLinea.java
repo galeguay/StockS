@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.example.stocks.R;
 import com.example.stocks.model.Data.Linea;
-import com.example.stocks.model.InsertDataOnDb;
+import com.example.stocks.sql.OperacionesBDD;
 
 import static com.example.stocks.ui.MainActivity.listaLineas;
 
@@ -23,11 +23,18 @@ public class ActAgregarLinea extends AppCompatActivity {
     private EditText editNombre, editCodigoColor;
     private TextView textMuestraColor;
     private Button buttonRegistrar, buttonVerdeAgua, buttonRosa, buttonCeleste, buttonTerra, buttonVerdeClaro, buttonMagenta, buttonAzul, buttonNaranja, buttonVerdeOscuro, buttonCerezo, buttonNegro, buttonAmarillo;
+    private OperacionesBDD operacionesBDD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_agregar_linea);
+
+        //iniciando adminBDD
+        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
+
+        //ocultando actionBar
+        getSupportActionBar().hide();
 
         buttonVerdeAgua = (Button) findViewById(R.id.AL_button_verdeAgua);
         buttonAmarillo = (Button) findViewById(R.id.AL_button_amarillo);
@@ -92,10 +99,10 @@ public class ActAgregarLinea extends AppCompatActivity {
             }
 
             if (!enUso) {
-                InsertDataOnDb insertDataOnDb = new InsertDataOnDb();
-                long id = insertDataOnDb.insertLinea(this.getApplicationContext(), editNombre.getText().toString(), codigoColor);
+                long id = operacionesBDD.insertLinea(this.getApplicationContext(), editNombre.getText().toString(), codigoColor);
                 Toast.makeText(this, "Se registró correctamente la linea", Toast.LENGTH_LONG).show();
 
+                //agregando lina nueva a listaLineas del MAIN
                 Linea nuevaLinea = new Linea(id, editNombre.getText().toString(), codigoColor);
                 listaLineas.add(nuevaLinea);
                 this.finish();

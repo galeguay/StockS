@@ -5,40 +5,89 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.stocks.model.Data.FileUtils;
+import com.example.stocks.sql.Contrato.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static com.example.stocks.model.Contract.*;
-
+//OBJETO PARA LA CREACION Y ACTUALIZACION DE LA ESTRUCTURA DE BASE DE DATOS
 public class AdminDb extends SQLiteOpenHelper {
 
-    public AdminDb(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public static final String NOMBRE_DB = "DB_STOCKS";
+
+    public static final int VERSION_ACTUAL_BDD= 1;
+
+    private static final String DB_FILEPATH = "/data/data/stock/databases/database.db";
+
+    public static final String APP_PAQUETE = "com.example.stocks";
+
+    private final Context context;
+
+
+    public AdminDb(Context context) {
+        super(context, NOMBRE_DB, null, VERSION_ACTUAL_BDD);
+        this.context=  context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREAR_TABLA_PRODUCTOS);
-        db.execSQL(CREAR_TABLA_COMPRAS);
-        db.execSQL(CREAR_TABLA_VENTAS);
-        db.execSQL(CREAR_TABLA_PRESTAMOS);
-        db.execSQL(CREAR_TABLA_LINEAS);
-        db.execSQL(CREAR_TABLA_MOVIMIENTOS);
-        db.execSQL(CREAR_TABLA_CLIENTES);
+        db.execSQL("CREATE TABLE " + Tablas.PRODUCTOS +"("
+                + Productos.ID_PRODUCTO +" INTEGER PRIMARY KEY, "
+                + Productos.NOMBRE +" TEXT, "
+                + Productos.CANTIDAD +" INTEGER, "
+                + Productos.NOMBRE_LINEA +" TEXT, "
+                + " FOREIGN KEY ("+Productos.NOMBRE_LINEA+") REFERENCES "+Tablas.LINEAS+"("+Movimientos.ID_MOVIMIENTO+"))");
+
+        db.execSQL("CREATE TABLE "+ Tablas.COMPRAS +"("
+                + Compras.ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
+                + Compras.CANTIDAD +" INTEGER, "
+                + Compras.MONTO +" REAL, "
+                + " FOREIGN KEY ("+Compras.ID_MOVIMIENTO+") REFERENCES "+Tablas.MOVIMIENTOS+"("+Movimientos.ID_MOVIMIENTO+"))");
+
+        db.execSQL("CREATE TABLE "+ Tablas.VENTAS +"("
+                + Ventas.ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
+                + Ventas.CANTIDAD +" INTEGER, "
+                + Ventas.MONTO +" REAL, "
+                + Ventas.ID_CLIENTE +" INTEGER, "
+                + " FOREIGN KEY ("+Ventas.ID_MOVIMIENTO+") REFERENCES "+Tablas.MOVIMIENTOS+"("+Movimientos.ID_MOVIMIENTO+"))");
+
+        db.execSQL("CREATE TABLE "+ Tablas.PRESTAMOS +"("
+                + Prestamos.ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
+                + Prestamos.TIPO_PRESTAMO +" TEXT, "
+                + Prestamos.SOCIA +" TEXT, "
+                + Prestamos.CANTIDAD +" INTEGER, "
+                + " FOREIGN KEY ("+Prestamos.ID_MOVIMIENTO+") REFERENCES "+Tablas.MOVIMIENTOS+"("+Movimientos.ID_MOVIMIENTO+"))");
+
+        db.execSQL("CREATE TABLE " + Tablas.LINEAS +"("
+                + Lineas.ID_LINEA+" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + Lineas.NOMBRE +" TEXT, "
+                + Lineas.COLOR +" INTEGER)");
+
+        db.execSQL("CREATE TABLE " + Tablas.MOVIMIENTOS +"("
+                + Movimientos.ID_MOVIMIENTO +" INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + Movimientos.ID_PRODUCTO +" INTEGER, "
+                + Movimientos.FECHA +" TEXT)");
+
+        db.execSQL("CREATE TABLE " + Tablas.CLIENTES +"("
+                + Clientes.ID_CLIENTE +" INTEGER PRIMARY KEY, "
+                + Clientes.NOMBRE +" TEXT, "
+                + Clientes.APELLIDO +" TEXT, "
+                + Clientes.NACIMIENTO +" TEXT, "
+                + Clientes.TELEFONO +" TEXT, "
+                + Clientes.DOMICILIO +" TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_PRODUCTOS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_COMPRAS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_VENTAS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_PRESTAMOS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_LINEAS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_MOVIMIENTOS);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLA_CLIENTES);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.PRODUCTOS);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.COMPRAS);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.VENTAS);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.PRESTAMOS);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.LINEAS);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.MOVIMIENTOS);
+        db.execSQL("DROP TABLE IF EXISTS "+Tablas.CLIENTES);
 
         onCreate(db);
     }

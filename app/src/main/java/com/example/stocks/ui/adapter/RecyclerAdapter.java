@@ -29,7 +29,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private Context context;
 
     public RecyclerAdapter(Context context){//ArrayList<Producto> listaProductos){
-        this.listaProductosMostrados = listaProductos;
+        String aux= String.valueOf(listaProductos.size());
+        Toast.makeText(context, aux, Toast.LENGTH_LONG).show();
+        this.listaProductosMostrados= listaProductos;
         this.context = context;
     }
 

@@ -10,8 +10,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
@@ -27,6 +25,7 @@ import com.example.stocks.model.Data.Linea;
 import com.example.stocks.model.Data.Producto;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Tabla;
+import com.example.stocks.sql.OperacionesBDD;
 import com.example.stocks.ui.adapter.RecyclerAdapter;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -37,14 +36,30 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-import static com.example.stocks.model.Contract.*;
+import static com.example.stocks.model.AdminDb.APP_PAQUETE;
+import static com.example.stocks.model.AdminDb.NOMBRE_DB;
+
 /*
 ULTIMOS CAMBIOS
-
+10-11
 -desactive constructor de objeto Linea(idLinea)
+
+11-11
 -mejoras en activity agregar linea
 -chequeo de duplicado al agregar una linea nueva
 
+12-12
+-mejoras en activity agregar producto
+-se agregó el chequeo de campos en activity agregar producto
+
+13-12
+-comienzo de mejoras en la administración y uso de db
+
+14-14
+-se sigue con las mejoras en la administración y uso de db, específicamente el archivo OperacionesBDD
+-se integró archivo insertOnDB en OperacionesBDD
+-se comentó comando de idMovimiento, en OperacioneBDD, al agregar compra prestamo o venta,(supuestamente no es necesario porque esta definido en la db como autoincrement)
+-se debugueo luego de los cambios
 
 
  */
@@ -60,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int permissionWrite;
     private static final int MY_PERMISSIONS_WRITE_EXTERNAL = 1;
     private static final int MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 1;
-    private int aux;
+    private OperacionesBDD operacionesBDD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +83,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
 
         //INICIA EL ADMINISTRADOR DE BASE DE DATOS
-        adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
+        //adminDb = new AdminDb(this);
+        operacionesBDD = OperacionesBDD.instancia(getApplicationContext());
         listaProductos = new ArrayList<>();
         listaLineas = new ArrayList<>();
 
         cargarListaLineas();
         cargarListaProductos();
-        Toast.makeText(this, String.valueOf(aux),Toast.LENGTH_LONG).show();
 
         //INICIALIZANDO VIEWS
         recyclerProductos = (RecyclerView)findViewById(R.id.rvMAListaProductos);
@@ -84,10 +99,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         final FloatingActionButton fabAgregarProducto = (FloatingActionButton) findViewById(R.id.fabAgregarProducto);
 
         //CARGANDO CONTENIDO DE RECYCLERVIEW
-        adapterRecycler = new RecyclerAdapter(this.getApplicationContext());//listaProductos);
+        adapterRecycler = new RecyclerAdapter(getApplicationContext());//listaProductos);
         recyclerProductos.setAdapter(adapterRecycler);
-
-
 
         //ASIGNANDO FUNCIONES DE LOS BOTONES DEL MENU FLOTANTE
         fabAgregarMovimiento.setOnClickListener(new View.OnClickListener() {
@@ -111,20 +124,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     }
 
+    //CARGA "ARRAYLIST<LINEAS> listaLineas" CON LOS PRODUCTOS QUE SE ENCUENTRAN EN LA BASE DE DATOS
     public void cargarListaLineas(){
-
-        SQLiteDatabase db = adminDb.getReadableDatabase();
-
-        long registros = DatabaseUtils.longForQuery(db,"SELECT COUNT(*) FROM "+ TABLA_LINEAS,null);
-        String registro = String.valueOf(registros);
-        String[] campos= {C_ID_LINEA, C_NOMBRE_LINEA, C_COLOR};
-
         try {
-            Cursor cursor = db.query(TABLA_LINEAS, campos, null, null, null, null, null);
+            Cursor cursor = operacionesBDD.cursorLineas();//db.query(AdminDb.Tablas.LINEAS, "*", null, null, null, null, null);
             if (cursor.moveToFirst()) {
 
                 listaLineas.add(new Linea(cursor.getInt(0), cursor.getString(1), cursor.getInt(2)));
-                aux = cursor.getInt(2);
                 while (cursor.moveToNext()) {
                     listaLineas.add(new Linea(cursor.getInt(0), cursor.getString(1), cursor.getInt(2)));
                 }
@@ -133,20 +139,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error al cargar lista de líneas", Toast.LENGTH_LONG).show();
         }
-
-
     }
 
-    //CARGA "ARRAYLIST<PRODUCTO> Producto" CON LOS PRODUCTOS QUE SE ENCUENTRAN EN LA BASE DE DATOS
+    //CARGA "ARRAYLIST<PRODUCTO> listaProductos" CON LOS PRODUCTOS QUE SE ENCUENTRAN EN LA BASE DE DATOS
     public void cargarListaProductos(){
-        SQLiteDatabase db = adminDb.getReadableDatabase();
-
-        long registros = DatabaseUtils.longForQuery(db,"SELECT COUNT(*) FROM "+ TABLA_PRODUCTOS,null);
-        String registro = String.valueOf(registros);
-        String[] campos= {C_ID_PRODUCTO, C_NOMBRE, C_CANTIDAD, C_NOMBRE_LINEA};
-
         try {
-            Cursor cursor = db.query(TABLA_PRODUCTOS, campos, null, null, null, null, null);
+            Cursor cursor = operacionesBDD.cursorTablaProductos();//db.query(TABLA_PRODUCTOS, campos, null, null, null, null, null);
             if (cursor.moveToFirst()) {
                 listaProductos.add(new Producto(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
 
@@ -158,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Toast.makeText(getApplicationContext(), "Error al cargar lista de productos", Toast.LENGTH_LONG).show();
         }
 
-        db.close();
+        //Toast.makeText(getApplicationContext(), String.valueOf(operacionesBDD.dbClose()), Toast.LENGTH_LONG).show();
+
     }
 
     //FUNCION DEL BOTON AGREGAR MOVIMIENTO DEL MENU FLOTANTE
@@ -249,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 //si tiene los permisos de escritura del directorio de internalDirectoy exporta la base de datos
                 if (internalDirectoy.canWrite()) {
-                    String directorioDB = "//data//" + APP_PAQUETE + "//databases//" + DB_NOMBRE;
+                    String directorioDB = "//data//" + APP_PAQUETE + "//databases//" + NOMBRE_DB;
                     Fecha fecha = new Fecha();
                     String sFecha = String.valueOf(fecha.getLong());
                     String nameBackupDB = "StocksDb" + sFecha + ".db";
@@ -299,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             File data = Environment.getDataDirectory();
 
             if (sd.canWrite()) {
-                String nombreDB = "//data//" + APP_PAQUETE + "//databases//" + DB_NOMBRE;
+                String nombreDB = "//data//" + APP_PAQUETE + "//databases//" + NOMBRE_DB;
                 String nombreBackupDB = "/StockS/importDB.db";
                 File importFrom = new File(sd, nombreBackupDB);
                 File importTo = new File(data, nombreDB);
@@ -314,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         } catch (Exception e) {
 
-            Toast.makeText(getBaseContext(), "No se pudo importar la base de datos", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "No se pudo importar la base de datos", Toast.LENGTH_LONG).show();
 
         }
 

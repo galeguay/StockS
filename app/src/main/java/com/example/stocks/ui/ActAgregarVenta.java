@@ -17,15 +17,13 @@ import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Producto;
 import com.example.stocks.model.Data.Tabla;
 import com.example.stocks.model.Data.Venta;
-import com.example.stocks.model.InsertDataOnDb;
+import com.example.stocks.sql.OperacionesBDD;
 
 import java.util.ArrayList;
 
-import static com.example.stocks.model.Contract.DB_NOMBRE;
 import static com.example.stocks.ui.MainActivity.listaProductos;
 
 public class ActAgregarVenta extends AppCompatActivity {
-
 
     private AdminDb adminDb;
     private TableLayout tableLayoutResumen;
@@ -37,8 +35,8 @@ public class ActAgregarVenta extends AppCompatActivity {
     private ArrayList<String> arrayNombresP;
     private ArrayList<Venta> listaVentas;
     private String[] header;
-    private InsertDataOnDb insertDataOnDB;
     private Button buttonRegistrarVenta;
+    private OperacionesBDD operacionesBDD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +47,7 @@ public class ActAgregarVenta extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //inicializando admin de base de datos
-        adminDb = new AdminDb(this, DB_NOMBRE, null, 1);
+        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
 
         //inicializando views
         TextView tituloActivity = (TextView) findViewById(R.id.AV_text_tituloActivity);
@@ -60,14 +58,14 @@ public class ActAgregarVenta extends AppCompatActivity {
         editCliente = (EditText) findViewById(R.id.AV_edit_cliente);
         tableLayoutResumen = (TableLayout) findViewById(R.id.AV_tableL_resumen);
         Button bAgregarAResumen = (Button) findViewById(R.id.AV_button_aResumen);
-        Button bLimpiarCampos = (Button)findViewById(R.id.AV_button_limpiarCampos);
-        Button bLimpiarResumen = (Button)findViewById(R.id.AV_button_limpiarResumen);
+        Button bLimpiarCampos = (Button) findViewById(R.id.AV_button_limpiarCampos);
+        Button bLimpiarResumen = (Button) findViewById(R.id.AV_button_limpiarResumen);
         buttonRegistrarVenta = (Button) findViewById(R.id.AV_button_registrar);
         buttonRegistrarVenta.setEnabled(false);
 
         //inicializando tabla
-        header=new String[] {"Producto", "Cantidad", "Monto x uni", "Cliente"};
-        tablaResumen = new Tabla(this, tableLayoutResumen,"RESUMEN DE COMPRA", header);
+        header = new String[]{"Producto", "Cantidad", "Monto x uni", "Cliente"};
+        tablaResumen = new Tabla(this, tableLayoutResumen, "RESUMEN DE COMPRA", header);
 
     }
 
@@ -76,24 +74,6 @@ public class ActAgregarVenta extends AppCompatActivity {
         super.onResume();
         getArraysProductos(arrayCodigosP, arrayNombresP);
 
-
-    }
-
-    //PROCEDIMIENTO BOTON "LIMPIAR CAMPOS"
-    public void limpiarCampos(View view){
-        autoCCodigoP.setText("");
-        autoCNombreP.setText("");
-        editCantidad.setText("");
-        editMonto.setText("");
-        Toast.makeText(this,"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
-    }
-
-    //PROCEDIMIENTO BOTON "LIMPIAR RESUMEN"
-    public void limpiarResumen(View view){
-        listaVentas.clear();
-        tablaResumen.removeAllViews();
-        buttonRegistrarVenta.setEnabled(false);
-        Toast.makeText(this,"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
     }
 
     //PROCEDIMIENTO Q CARGA LOS ARREGLOS PASADOS CON LOS NOMBRES Y CODIGOS DE LOS PRODUCTOS EN LA BDD
@@ -106,34 +86,33 @@ public class ActAgregarVenta extends AppCompatActivity {
             arrayNombresProductos.add(producto.getNombre());
         }
 
-
     }
 
     //PROCEDIMIENTO BOTON "AGREGAR A RESUMEN"
-    public void agregarMovimientoATabla(View view){
+    public void agregarMovimientoATabla(View view) {
 
         Fecha fecha = new Fecha();
 
         //cargando datos de venta en buffer
-        if (autoCCodigoP.getText().toString().isEmpty()){
+        if (autoCCodigoP.getText().toString().isEmpty()) {
 
-            Toast.makeText(this,"El campo \"CODIGO DE PRODUCTO\" esta incompleto",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"CODIGO DE PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
-        } else if (autoCNombreP.getText().toString().isEmpty()){
+        } else if (autoCNombreP.getText().toString().isEmpty()) {
 
-            Toast.makeText(this,"El campo \"NOMBRE DEL PRODUCTO\" esta incompleto",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"NOMBRE DEL PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
-        } else if (editCantidad.getText().toString().isEmpty()){
+        } else if (editCantidad.getText().toString().isEmpty()) {
 
-            Toast.makeText(this,"El campo \"CANTIDAD\" esta incompleto",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto", Toast.LENGTH_LONG).show();
 
-        } else if (editCliente.getText().toString().isEmpty()){
+        } else if (editCliente.getText().toString().isEmpty()) {
 
-            Toast.makeText(this,"El campo \"CLIENTE\" esta incompleto",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"CLIENTE\" esta incompleto", Toast.LENGTH_LONG).show();
 
         } else {
 
-            if (editMonto.getText().toString().isEmpty()){
+            if (editMonto.getText().toString().isEmpty()) {
                 editMonto.setText("-1");
             }
 
@@ -142,12 +121,12 @@ public class ActAgregarVenta extends AppCompatActivity {
             listaVentas.add(nuevaVenta);
 
             //agregando venta a tabla resumen (en pantalla)
-            if (editMonto.getText().toString() == "-1"){
+            if (editMonto.getText().toString() == "-1") {
 
                 String[] row = {autoCNombreP.getText().toString(), editCantidad.getText().toString(), "-", editCliente.getText().toString()};
                 tablaResumen.addRow(row);
 
-            }else{
+            } else {
 
                 String[] row = {autoCNombreP.getText().toString(), editCantidad.getText().toString(), editMonto.getText().toString(), editCliente.getText().toString()};
                 tablaResumen.addRow(row);
@@ -166,12 +145,32 @@ public class ActAgregarVenta extends AppCompatActivity {
     }
 
     //PROCEDIMIENTO BOTON "REGISTRAR VENTA"
-    public void registrarVenta(){
+    public void registrarVenta() {
 
-        insertDataOnDB.insertVenta(this.getApplicationContext(),listaVentas);
-        Toast.makeText(this,"La venta se registró correctamente",Toast.LENGTH_LONG);
+        operacionesBDD.insertVenta(this.getApplicationContext(), listaVentas);
+        Toast.makeText(this, "La venta se registró correctamente", Toast.LENGTH_LONG);
         ActAgregarMovimiento.fa.finish();
         this.finish();
 
     }
+
+    //PROCEDIMIENTO BOTON "LIMPIAR CAMPOS"
+    public void limpiarCampos(View view) {
+        autoCCodigoP.setText("");
+        autoCNombreP.setText("");
+        editCantidad.setText("");
+        editMonto.setText("");
+        Toast.makeText(this, "Se limpiaron todos los campos", Toast.LENGTH_SHORT).show();
+
+    }
+
+    //PROCEDIMIENTO BOTON "LIMPIAR RESUMEN"
+    public void limpiarResumen(View view) {
+        listaVentas.clear();
+        tablaResumen.removeAllViews();
+        buttonRegistrarVenta.setEnabled(false);
+        Toast.makeText(this, "Se limpió la tabla resumen", Toast.LENGTH_SHORT).show();
+
+    }
+
 }

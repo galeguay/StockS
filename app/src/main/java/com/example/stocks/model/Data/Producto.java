@@ -10,8 +10,8 @@ public class Producto implements Comparable<Producto>{
 
     public Producto(int codigo, String nombre,int cantidad, String linea) {
 
-        this.nombre = nombre;
         this.codigo = codigo;
+        this.nombre = nombre;
         this.cantidad = cantidad;
         this.linea = linea;
 

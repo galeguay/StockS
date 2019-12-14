@@ -1,7 +1,7 @@
 package com.example.stocks.model;
 
 public class Contract {
-
+/*
     public static String DB_FILEPATH = "/data/data/stock/databases/database.db";
     //constantes de app
     public static final String APP_PAQUETE = "com.example.stocks";
@@ -45,8 +45,9 @@ public class Contract {
     public static final String CREAR_TABLA_PRODUCTOS= "CREATE TABLE " + TABLA_PRODUCTOS +"("
             + C_ID_PRODUCTO +" INTEGER PRIMARY KEY, "
             + C_NOMBRE +" TEXT, "
-            + C_NOMBRE_LINEA +" INTEGER, "
-            + C_CANTIDAD +" INTEGER)";
+            + C_NOMBRE_LINEA +" TEXT, "
+            + C_CANTIDAD +" INTEGER)"
+            + " FOREIGN KEY ("+C_NOMBRE_LINEA+") REFERENCES "+TABLA_LINEAS+"("+C_NOMBRE_LINEA+"))";
 
     public static final String CREAR_TABLA_COMPRAS= "CREATE TABLE " + TABLA_COMPRAS +"("
             + C_ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
@@ -73,18 +74,9 @@ public class Contract {
             + C_NOMBRE_LINEA +" TEXT, "
             + C_COLOR +" INTEGER)";
 
-    public static final String CREAR_TABLA_MOVIMIENTOS= "create table " + TABLA_MOVIMIENTOS +"("
-            + C_ID_MOVIMIENTO +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + C_ID_PRODUCTO +" INTEGER, "
-            + C_FECHA +" TEXT)";
+//    public static final String CREAR_TABLA_MOVIMIENTOS= ;
 
-    public static final String CREAR_TABLA_CLIENTES= "CREATE TABLE " + TABLA_CLIENTES +"("
-            + C_ID_CLIENTE +" INTEGER PRIMARY KEY, "
-            + C_NOMBRE_CLIENTE +" TEXT, "
-            + C_APELLIDO +" TEXT, "
-            + C_FECHA_NACIMIENTO +" TEXT, "
-            + C_TELEFONO +" TEXT, "
-            + C_DIRECCION +" TEXT)";
-
+  //  public static final String CREAR_TABLA_CLIENTES=
+*/
 
 }

@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.stocks.R;
 import com.example.stocks.model.AdminDb;
 import com.example.stocks.model.Data.Producto;
-import com.example.stocks.model.InsertDataOnDb;
+import com.example.stocks.sql.OperacionesBDD;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,7 @@ public class ActAgregarPrestamo extends AppCompatActivity {
     private AutoCompleteTextView autoCCodigoProducto, autoCNombreProducto;
     private ArrayList<String> arrayCodigosP, arrayNombresP, TiposPrestamos;
     private RadioButton radioBPrestamoPedido, radioBPrastamoDado;
-    private InsertDataOnDb insertDataOnDB;
+    private OperacionesBDD operacionesBDD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +40,7 @@ public class ActAgregarPrestamo extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //inicializando admin de base de datos
-        //adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
-        insertDataOnDB = new InsertDataOnDb();
+        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
 
         //CARGANDO VIEWS
         TextView tTitulo = (TextView)findViewById(R.id.AP_text_titulo);
@@ -120,12 +119,12 @@ public class ActAgregarPrestamo extends AppCompatActivity {
 
             if (radioBPrestamoPedido.isChecked()) {
 
-                insertDataOnDB.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"pedido", eSocia.getText().toString(), eCantidad.getText().toString());
+                operacionesBDD.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"pedido", eSocia.getText().toString(), eCantidad.getText().toString());
                 Toast.makeText(this, "Se registró correctamente el prestamo", Toast.LENGTH_SHORT).show();
 
             } else if (radioBPrastamoDado.isChecked()) {
 
-                insertDataOnDB.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"dado", eSocia.getText().toString(), eCantidad.getText().toString());
+                operacionesBDD.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"dado", eSocia.getText().toString(), eCantidad.getText().toString());
                 Toast.makeText(this, "Se registró correctamente el prestamo", Toast.LENGTH_SHORT).show();
 
             }

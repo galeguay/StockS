@@ -19,7 +19,7 @@ import com.example.stocks.model.AdminDb;
 import com.example.stocks.model.Data.*;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Tabla;
-import com.example.stocks.model.InsertDataOnDb;
+import com.example.stocks.sql.OperacionesBDD;
 
 import java.util.ArrayList;
 
@@ -35,8 +35,8 @@ public class ActAgregarCompra extends AppCompatActivity {
     private ArrayList<String> arrayCodigosP, arrayNombresP;
     private ArrayList<Compra> listaCompras;
     private String[] header;
-    private InsertDataOnDb insertDataOnDb;
     private Button buttonRegistrarCompra;
+    private OperacionesBDD operacionesBDD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +47,7 @@ public class ActAgregarCompra extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //inicializando admin de base de datos
-        //adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
-        insertDataOnDb = new InsertDataOnDb();
+        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
 
         //CARGANDO VIEWS
         TextView tAgregarCompra = (TextView) findViewById(R.id.AC_text_agregarCompra);
@@ -184,7 +183,7 @@ public class ActAgregarCompra extends AppCompatActivity {
     //PROCEDIMIENTO BOTON REGISTRAR COMPRA
     public void registrarCompra(View view){
 
-        insertDataOnDb.insertCompra(this.getApplicationContext(), listaCompras);
+        operacionesBDD.insertCompra(this.getApplicationContext(), listaCompras);
         Toast.makeText(this,"La compra se registró correctamente",Toast.LENGTH_LONG).show();
         ActAgregarMovimiento.fa.finish();
         this.finish();

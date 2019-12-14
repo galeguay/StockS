@@ -1,15 +1,8 @@
 package com.example.stocks;
 
 import android.app.Application;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
-import com.example.stocks.model.AdminDb;
-
-import static com.example.stocks.model.Contract.C_ID_MOVIMIENTO;
-import static com.example.stocks.model.Contract.DB_NOMBRE;
-import static com.example.stocks.model.Contract.TABLA_MOVIMIENTOS;
+import com.example.stocks.sql.OperacionesBDD;
 
 public class MyAplication extends Application {
 
@@ -26,9 +19,11 @@ public class MyAplication extends Application {
 
     //CARGA DEL ULTIMO ID DE MOVIMIENTOS
     public void setLastMId(){
-
-        AdminDb adminDb= new AdminDb(this, DB_NOMBRE, null, 1);
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        OperacionesBDD oDB= OperacionesBDD.instancia(getApplicationContext());
+        LastMId= oDB.obtenerIdUltimoMovimiento(getApplicationContext());
+/*
+        AdminDb baseDeDatos = new AdminDb(getApplicationContext());
+        SQLiteDatabase db = baseDeDatos.getReadableDatabase();
 
         try{
 
@@ -46,7 +41,7 @@ public class MyAplication extends Application {
             Toast.makeText(getApplicationContext(), "Error al cargar LastMId", Toast.LENGTH_LONG).show();
         }
 
-        db.close();
+        db.close();*/
     }
 
     //modifica EL ID DEL ULTIMO MOVIMIENTO AGREGADO
