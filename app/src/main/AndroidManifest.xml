@@ -6,22 +6,27 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".MyAplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
-        <activity android:name=".ui.ActInfoProducto"></activity>
-        <activity android:name=".ui.ActAgregarLinea" />
+        <activity android:name=".ui.ActAgregarCliente"></activity>
+        <activity android:name=".ui.ActInfoProducto" />
+        <activity android:name=".ui.ActAgregarLinea"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity android:name=".ui.ActAgregarPrestamo" />
-        <activity android:name=".ui.ActAgregarVenta" />
-        <activity android:name=".ui.ActAgregarProducto" />
-        <activity android:name=".ui.ActAgregarCompra" />
+        <activity android:name=".ui.ActAgregarVenta"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".ui.ActAgregarProducto"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+        <activity android:name=".ui.ActAgregarCompra"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".ui.ActAgregarMovimiento"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

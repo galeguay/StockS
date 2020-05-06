@@ -1,4 +1,4 @@
-package com.example.stocks.model;
+package com.example.stocks.sql;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,8 +12,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-//OBJETO PARA LA CREACION Y ACTUALIZACION DE LA ESTRUCTURA DE BASE DE DATOS
-public class AdminDb extends SQLiteOpenHelper {
+/**OBJETO PARA LA ADMINISTRACIÓN DE LA ESTRUCTURA DE BASE DE DATOS
+ *
+ */
+// TODO ACTUALIZAR BDD PARA CAMBIAR ORDEN CAMPOS EN PRESTAMO, MOVIENDO CANTIDAD A LA 2DA POSICION
+public class AdminBDD extends SQLiteOpenHelper {
 
     public static final String NOMBRE_DB = "DB_STOCKS";
 
@@ -26,7 +29,7 @@ public class AdminDb extends SQLiteOpenHelper {
     private final Context context;
 
 
-    public AdminDb(Context context) {
+    public AdminBDD(Context context) {
         super(context, NOMBRE_DB, null, VERSION_ACTUAL_BDD);
         this.context=  context;
     }

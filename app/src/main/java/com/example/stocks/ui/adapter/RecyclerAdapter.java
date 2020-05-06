@@ -1,14 +1,10 @@
 package com.example.stocks.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -23,14 +19,13 @@ import java.util.ArrayList;
 import static com.example.stocks.ui.MainActivity.listaLineas;
 import static com.example.stocks.ui.MainActivity.listaProductos;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolderItems> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolderItems> implements View.OnClickListener {
 
     private ArrayList<Producto> listaProductosMostrados;
     private Context context;
+    private View.OnClickListener listener;
 
     public RecyclerAdapter(Context context){//ArrayList<Producto> listaProductos){
-        String aux= String.valueOf(listaProductos.size());
-        Toast.makeText(context, aux, Toast.LENGTH_LONG).show();
         this.listaProductosMostrados= listaProductos;
         this.context = context;
     }
@@ -39,6 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public ViewHolderItems onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_main_item, null, false);
+        view.setOnClickListener(this);
         return new ViewHolderItems(view);
     }
 
@@ -58,6 +54,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public int getItemCount() {
         return listaProductosMostrados.size();
+    }
+
+    public void setOnClickListener(View.OnClickListener listener){
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (listener!=null){
+            listener.onClick(v);
+        }
+
     }
 
     public class ViewHolderItems extends RecyclerView.ViewHolder {

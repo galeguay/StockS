@@ -3,7 +3,7 @@ package com.example.stocks.sql;
 public class Contrato {
 
     interface CamposProductos{
-        String ID_PRODUCTO= "idproducto";
+        String ID_PRODUCTO = "idproducto";
         String NOMBRE= "nombre";
         String CANTIDAD= "cantidad";
         String NOMBRE_LINEA= "nombreLinea";

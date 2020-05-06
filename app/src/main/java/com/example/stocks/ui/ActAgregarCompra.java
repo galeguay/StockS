@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.stocks.R;
-import com.example.stocks.model.AdminDb;
+import com.example.stocks.sql.AdminBDD;
 import com.example.stocks.model.Data.*;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Tabla;
@@ -27,12 +27,13 @@ import static com.example.stocks.ui.MainActivity.listaProductos;
 
 public class ActAgregarCompra extends AppCompatActivity {
 
-    private AdminDb adminDb;
+    private AdminBDD adminBDD;
     private TableLayout tableLayoutAAC1;
     private Tabla tablaResumen;
-    private EditText editCantidad, editMonto, editPersona, editComentario;
-    private AutoCompleteTextView autoCNombreP, autoCCodigoP;
-    private ArrayList<String> arrayCodigosP, arrayNombresP;
+    private EditText editCantidad, editMonto;
+    private AutoCompleteTextView autoCNombreProducto, autoCCodigoProducto;
+    private ArrayList<String> arrayCodigosProductos, arrayNombresProductos;
+
     private ArrayList<Compra> listaCompras;
     private String[] header;
     private Button buttonRegistrarCompra;
@@ -47,72 +48,98 @@ public class ActAgregarCompra extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //inicializando admin de base de datos
-        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
+        operacionesBDD= OperacionesBDD.instanceOf(getApplicationContext());
 
         //CARGANDO VIEWS
         TextView tAgregarCompra = (TextView) findViewById(R.id.AC_text_agregarCompra);
         tableLayoutAAC1 = (TableLayout) findViewById(R.id.AC_tableL_resumen);
-        autoCNombreP = (AutoCompleteTextView) findViewById(R.id.AC_autoC_nombreProducto);
-        autoCCodigoP = (AutoCompleteTextView) findViewById(R.id.AC_autoC_codigoProducto);
+        autoCNombreProducto = (AutoCompleteTextView) findViewById(R.id.AC_autoC_nombreProducto);
+        autoCCodigoProducto = (AutoCompleteTextView) findViewById(R.id.AC_autoC_codigoProducto);
         editCantidad = (EditText) findViewById(R.id.AC_edit_cantidad);
         editMonto = (EditText) findViewById(R.id.AC_edit_monto);
         Button buttonAgregar = (Button) findViewById(R.id.AC_button_agregar);
-        Button buttonLimpiarCampos = (Button) findViewById(R.id.AC_button_limpiarCampos);
         Button buttonLimpiarResumen = (Button) findViewById(R.id.AC_button_limpiarResumen);
         buttonRegistrarCompra = (Button) findViewById(R.id.AC_button_registrar);
         buttonRegistrarCompra.setEnabled(false);
+
         //inicializando tabla
-        header = new String[]{"Producto", "Cantidad", "Monto x uni"};
-        tablaResumen = new Tabla(this, tableLayoutAAC1, "RESUMEN DE COMPRA", header);
+        header = new String[]{"#", "Producto", "$ por unidad"};
+        float[] weightCol= new float[]{1.5f,6f,2.5f};
+        tablaResumen = new Tabla(this, tableLayoutAAC1, weightCol, header);
 
         //INICIALIZANDO VARIABLES
         listaCompras = new ArrayList<Compra>();
-        arrayCodigosP = new ArrayList<String>();
-        arrayNombresP = new ArrayList<String>();
+        arrayCodigosProductos = new ArrayList<String>();
+        arrayNombresProductos = new ArrayList<String>();
 
-        //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
-        //cargando arrays
-        getArraysProductos(arrayCodigosP, arrayNombresP);
-        //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosP);
-        autoCCodigoP.setAdapter(adapterCodigos);
-        //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el codigo correspondiente en el autoCompleteNombre
-        autoCCodigoP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int n = arrayCodigosP.indexOf(autoCCodigoP.getText().toString());
-                autoCNombreP.setText(arrayNombresP.get(n));
-            }
-        });
-        //configurando autoCompleteNombre
-        ArrayAdapter<String> adapterNombres = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresP);
-        autoCNombreP.setAdapter(adapterNombres);
-        //al seleccionar un elemento en el autoCompleteNombre, se complete automaticamente el nombre correspondiente en el autoCompleteCodigo
-        autoCNombreP.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int n = arrayNombresP.indexOf(autoCNombreP.getText().toString());
-                autoCCodigoP.setText(arrayCodigosP.get(n));
-            }
-        });
     }
 
-    //PROCEDIMIENTO AL PRESIONAR BOTON "AGREGAR A RESUMEN"
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getArraysProductos();
+
+        //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
+        //configurando autoCompleteCodigo
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
+        autoCCodigoProducto.setAdapter(adapterCodigos);
+
+        //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el codigo correspondiente en el autoCompleteNombre
+        autoCCodigoProducto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int n = arrayCodigosProductos.indexOf(autoCCodigoProducto.getText().toString());
+                autoCNombreProducto.setText(arrayNombresProductos.get(n));
+            }
+        });
+
+        //configurando autoCompleteNombre
+        ArrayAdapter<String> adapterNombres = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
+        autoCNombreProducto.setAdapter(adapterNombres);
+
+        //al seleccionar un elemento en el autoCompleteNombre, se complete automaticamente el nombre correspondiente en el autoCompleteCodigo
+        autoCNombreProducto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int n = arrayNombresProductos.indexOf(autoCNombreProducto.getText().toString());
+                autoCCodigoProducto.setText(arrayCodigosProductos.get(n));
+            }
+        });
+
+    }
+
+    //PROCEDIMIENTO inicializa y carga los arreglos con nombres y codigos de los productos en la BDD
+    public void getArraysProductos(){
+
+        arrayCodigosProductos = new ArrayList<>();
+        arrayNombresProductos = new ArrayList<>();
+
+        for (Producto producto : listaProductos ){
+            arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
+            arrayNombresProductos.add(producto.getNombre());
+        }
+    }
+
+    //PROCEDIMIENTO BOTON "AGREGAR A RESUMEN"
     public void agregarCompraAResumen(View view){
 
         Fecha fecha = new Fecha();
 
-        if (autoCCodigoP.getText().toString().isEmpty()){
+        if (autoCCodigoProducto.getText().toString().isEmpty()){
 
             Toast.makeText(this,"El campo \"CODIGO DE PRODUCTO\" esta incompleto",Toast.LENGTH_LONG).show();
 
-        } else if (autoCNombreP.getText().toString().isEmpty()){
+        } else if (!listaProductos.contains(new Producto(Integer.parseInt(autoCCodigoProducto.getText().toString())))){
+
+            Toast.makeText(getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
+
+        } else if (autoCNombreProducto.getText().toString().isEmpty()){
 
             Toast.makeText(this,"El campo \"NOMBRE DEL PRODUCTO\" esta incompleto",Toast.LENGTH_LONG).show();
 
-        } else if (editCantidad.getText().toString().isEmpty()){
+        } else if (editCantidad.getText().toString().isEmpty() || (Integer.parseInt(editCantidad.getText().toString()) <= 0)) {
 
-            Toast.makeText(this,"El campo \"CANTIDAD\" esta incompleto",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
 
         } else {
 
@@ -121,62 +148,31 @@ public class ActAgregarCompra extends AppCompatActivity {
             }
 
             //agregando compra a bdd
-            Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoP.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()));
+            Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoProducto.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()));
             listaCompras.add(nuevaCompra);
+            int[] maxEms= {0,3,0};
 
             //agregando compra a tabla resumen (en pantalla)
             if (editMonto.getText().toString() == "-1"){
 
-                String[] row = {editCantidad.getText().toString(), "-", autoCNombreP.getText().toString()};
-                tablaResumen.addRow(row);
+                String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), "-"};
+                tablaResumen.addFilaConMaxEms(row, maxEms);
 
             }else{
 
-                String[] row = {editCantidad.getText().toString(), editMonto.getText().toString(), autoCNombreP.getText().toString()};
-                tablaResumen.addRow(row);
+                String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), editMonto.getText().toString()};
+                tablaResumen.addFilaConMaxEms(row, maxEms);
+
             }
 
             //limpiando views
-            autoCCodigoP.setText("");
-            autoCNombreP.setText("");
+            autoCCodigoProducto.setText("");
+            autoCNombreProducto.setText("");
             editCantidad.setText("");
             editMonto.setText("");
 
+            //habilitando boton registrar venta
             buttonRegistrarCompra.setEnabled(true);
-            }
-    }
-
-    //PROCEDIMIENTO BOTON LIMPIAR CAMPOS
-    public void limpiarCampos(View view){
-        autoCCodigoP.setText("");
-        autoCNombreP.setText("");
-        editCantidad.setText("");
-        editMonto.setText("");
-        Toast.makeText(this,"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
-    }
-
-    //PROCEDIMIENTO BOTON DE AGREGAR PRODUCTO (+)
-    public void agregarProducto(View view){
-        Intent intentAgregarProducto= new Intent(this, ActAgregarProducto.class);
-        startActivity(intentAgregarProducto);
-    }
-
-    //PROCEDIMIENTO BOTON LIMPIAR RESUMEN
-    public void limpiarResumen(View view){
-        listaCompras.clear();
-        tablaResumen.removeAllViews();
-        buttonRegistrarCompra.setEnabled(false);
-        Toast.makeText(this,"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
-    }
-
-    //PROCEDIMIENTO Q CARGA LOS ARREGLOS PASADOS CON LOS NOMBRES Y CODIGOS DE LOS PRODUCTOS EN LA BDD
-    public void getArraysProductos(ArrayList<String> arrayCodigosProductos, ArrayList<String> arrayNombresProductos){
-
-        arrayCodigosProductos.clear();
-        arrayNombresProductos.clear();
-        for (Producto producto : listaProductos ){
-            arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
-            arrayNombresProductos.add(producto.getNombre());
         }
     }
 
@@ -188,5 +184,31 @@ public class ActAgregarCompra extends AppCompatActivity {
         ActAgregarMovimiento.fa.finish();
         this.finish();
 
+    }
+
+    //PROCEDIMIENTO BOTON LIMPIAR CAMPOS
+    public void limpiarCampos(View view){
+
+        autoCCodigoProducto.setText("");
+        autoCNombreProducto.setText("");
+        editCantidad.setText("");
+        editMonto.setText("");
+        Toast.makeText(this,"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
+    }
+
+    //PROCEDIMIENTO BOTON DE AGREGAR PRODUCTO (+)
+    public void agregarProducto(View view){
+
+        Intent intentAgregarProducto= new Intent(this, ActAgregarProducto.class);
+        startActivity(intentAgregarProducto);
+    }
+
+    //PROCEDIMIENTO BOTON LIMPIAR RESUMEN
+    public void limpiarResumen(View view){
+
+        listaCompras.clear();
+        tablaResumen.removeAllViews();
+        buttonRegistrarCompra.setEnabled(false);
+        Toast.makeText(this,"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
     }
 }

@@ -30,6 +30,7 @@ public class Producto implements Comparable<Producto>{
         return this.codigo - producto.codigo;
     }
 
+    //COMPARA POR CODIGO
     public boolean equals(Object o){
         if (o instanceof Producto){
             Producto otro = (Producto)o;
@@ -42,6 +43,7 @@ public class Producto implements Comparable<Producto>{
     }
 
     //GETTERS Y SETTERS
+
     public String getNombre() {
         return nombre;
     }

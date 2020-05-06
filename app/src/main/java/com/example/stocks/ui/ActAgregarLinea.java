@@ -31,7 +31,7 @@ public class ActAgregarLinea extends AppCompatActivity {
         setContentView(R.layout.activity_act_agregar_linea);
 
         //iniciando adminBDD
-        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
+        operacionesBDD= OperacionesBDD.instanceOf(getApplicationContext());
 
         //ocultando actionBar
         getSupportActionBar().hide();

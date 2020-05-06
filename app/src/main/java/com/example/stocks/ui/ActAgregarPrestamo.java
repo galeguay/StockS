@@ -14,7 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stocks.R;
-import com.example.stocks.model.AdminDb;
+import com.example.stocks.sql.AdminBDD;
 import com.example.stocks.model.Data.Producto;
 import com.example.stocks.sql.OperacionesBDD;
 
@@ -24,7 +24,7 @@ import static com.example.stocks.ui.MainActivity.listaProductos;
 
 public class ActAgregarPrestamo extends AppCompatActivity {
 
-    private AdminDb adminDb;
+    private AdminBDD adminBDD;
     private EditText eCantidad, eSocia;
     private AutoCompleteTextView autoCCodigoProducto, autoCNombreProducto;
     private ArrayList<String> arrayCodigosP, arrayNombresP, TiposPrestamos;
@@ -40,7 +40,7 @@ public class ActAgregarPrestamo extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //inicializando admin de base de datos
-        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
+        operacionesBDD= OperacionesBDD.instanceOf(getApplicationContext());
 
         //CARGANDO VIEWS
         TextView tTitulo = (TextView)findViewById(R.id.AP_text_titulo);

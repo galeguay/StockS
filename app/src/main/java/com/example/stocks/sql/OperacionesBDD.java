@@ -6,36 +6,43 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-import com.example.stocks.MyAplication;
-import com.example.stocks.model.AdminDb;
 import com.example.stocks.model.Data.Compra;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Producto;
+import com.example.stocks.model.Data.Tabla;
 import com.example.stocks.model.Data.Venta;
 import com.example.stocks.sql.Contrato.*;
 
 import java.util.ArrayList;
 
-import static com.example.stocks.ui.MainActivity.adapterRecycler;
+import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 import static com.example.stocks.ui.MainActivity.listaProductos;
+
+/**
+ * Este objeto, se instancia cuando sea necesario llamar a alguno
+ * de sus metodos, todos ellos referidos a la escritura y lectura
+ * de datos en la base de datos.
+ *
+ */
 
 public class OperacionesBDD {
 
-    private static AdminDb adminDb;
+    private static AdminBDD adminBDD;
 
-    private static OperacionesBDD instancia= new OperacionesBDD();
+    private static OperacionesBDD instancia = new OperacionesBDD();
 
-    private OperacionesBDD(){}
+    private OperacionesBDD() {
+    }
 
-    public static OperacionesBDD instancia(Context context){
-        if (adminDb == null) {
-            adminDb = new AdminDb(context);
+    public static OperacionesBDD instanceOf(Context context) {
+        if (adminBDD == null) {
+            adminBDD = new AdminBDD(context);
         }
         return instancia;
     }
 
     public Cursor cursorTablaProductos() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.PRODUCTOS);
@@ -44,7 +51,7 @@ public class OperacionesBDD {
     }
 
     public Cursor cursorTablaMovimientos() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.MOVIMIENTOS);
@@ -53,7 +60,7 @@ public class OperacionesBDD {
     }
 
     public Cursor cursorTablaClientes() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.CLIENTES);
@@ -62,7 +69,7 @@ public class OperacionesBDD {
     }
 
     public Cursor cursorTablaCompras() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.COMPRAS);
@@ -71,7 +78,7 @@ public class OperacionesBDD {
     }
 
     public Cursor cursorTablaVentas() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.VENTAS);
@@ -80,7 +87,7 @@ public class OperacionesBDD {
     }
 
     public Cursor cursorTablaPrestamos() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.PRESTAMOS);
@@ -89,25 +96,94 @@ public class OperacionesBDD {
     }
 
     public Cursor cursorLineas() {
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
 
         String sql = String.format("SELECT * FROM %s",
                 Tablas.LINEAS);
 
         return db.rawQuery(sql, null);
     }
-/*
-    public Cursor obtenerDetallesPorIdPedido(String idCabeceraPedido) {
-        SQLiteDatabase db = baseDatos.getReadableDatabase();
 
-        String sql = String.format("SELECT * FROM %s WHERE %s=?",
-                Tablas., CabecerasPedido.ID_CABECERA_PEDIDO);
+    public Cursor cursorDetallesMovimiento(int idMovimiento, String tipoMovimiento) {
 
-        String[] selectionArgs = {idCabeceraPedido};
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
+        String nombreTabla = "Nulo";
+        switch (tipoMovimiento) {
+            case "Compra":
+                nombreTabla = Tablas.COMPRAS;
+                break;
+            case "Venta":
+                nombreTabla = Tablas.VENTAS;
+                break;
+            case "Prestamop pedido":
+                nombreTabla = Tablas.PRESTAMOS;
+                break;
+            case "Prestamo dado":
+                nombreTabla = Tablas.PRESTAMOS;
+                break;
+            default:
+        }
+        Cursor cursor = null;
+        if (!nombreTabla.equals("Nulo")) {
+            cursor = db.rawQuery("SELECT M.fecha , T.* FROM movimientos M, " + nombreTabla + " T WHERE T.idMovimiento = " + idMovimiento + " AND M.idMovimiento = " + idMovimiento, null);
+        }
+        return cursor;
+    }
 
-        return db.rawQuery(sql, selectionArgs);*/
+    public ArrayList<String[]> listaUltimosMovimientos(int idProducto){
+
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
+        ArrayList listaUltimosMovimientos = new ArrayList<String[]>();
+
+        Cursor cursor = db.rawQuery( "SELECT C.cantidad, M.Fecha, C.idMovimiento FROM movimientos M, compras C WHERE C.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
+        if (cursor.moveToFirst()){
+            Fecha fecha= new Fecha(cursor.getString(1));
+            String[] row = {cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
+            listaUltimosMovimientos.add(row);
+            while (cursor.moveToNext()) {
+                row = new String[]{cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
+                listaUltimosMovimientos.add(row);
+            }
+        }
+        cursor.close();
+        cursor = db.rawQuery( "SELECT V.cantidad, M.Fecha, V.idMovimiento FROM movimientos M, ventas V WHERE V.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
+        if (cursor.moveToFirst()){
+            Fecha fecha= new Fecha(cursor.getString(1));
+            String[] row = {cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
+            listaUltimosMovimientos.add(row);
+            while (cursor.moveToNext()) {
+                row = new String[]{cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
+                listaUltimosMovimientos.add(row);
+            }
+        }
+        cursor.close();
+        cursor = db.rawQuery( "SELECT P.cantidad, M.Fecha, P.idMovimiento FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='pedido'AND M.idproducto = " + idProducto, null);
+        if (cursor.moveToFirst()){
+            Fecha fecha= new Fecha(cursor.getString(1));
+            String[] row = {cursor.getString(0), "Prestamo pedido", fecha.getStringDMA(), cursor.getString(2)};
+            listaUltimosMovimientos.add(row);
+            while (cursor.moveToNext()) {
+                row = new String[]{cursor.getString(0), "Prestamo pedido", fecha.getStringDMA(), cursor.getString(2)};
+                listaUltimosMovimientos.add(row);
+            }
+        }
+        cursor.close();
+        cursor = db.rawQuery( "SELECT P.cantidad, M.Fecha, P.idMovimiento FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='dado' AND M.idproducto = " + idProducto,null );
+        if (cursor.moveToFirst()){
+            Fecha fecha= new Fecha(cursor.getString(1));
+            String[] row = {cursor.getString(0), "Prestamo dado", fecha.getStringDMA(), cursor.getString(2)};
+            listaUltimosMovimientos.add(row);
+            while (cursor.moveToNext()) {
+                row = new String[]{cursor.getString(0), "Prestamo dado", fecha.getStringDMA(), cursor.getString(2)};
+                listaUltimosMovimientos.add(row);
+            }
+        }
+
+        return listaUltimosMovimientos;
+    }
+
     public int obtenerIdUltimoMovimiento(Context context){
-        SQLiteDatabase db = adminDb.getReadableDatabase();
+        SQLiteDatabase db = adminBDD.getReadableDatabase();
         int aux = 0;
         try{
             String[] campos= {Movimientos.ID_MOVIMIENTO};
@@ -127,16 +203,16 @@ public class OperacionesBDD {
 
     public boolean dbClose(){
         boolean aux= false;
-        if(adminDb != null) {
+        if(adminBDD != null) {
             aux=false;
-            adminDb.close();
+            adminBDD.close();
         }else {aux= true;}
         return aux;
     }
 
     public void insertProducto(Context context, String codigo, String nombre, String cantidad, String linea){
 
-        SQLiteDatabase db = adminDb.getWritableDatabase();
+        SQLiteDatabase db = adminBDD.getWritableDatabase();
 
         //creando y cargando contenedor de valores
         ContentValues dataProducto = new ContentValues();
@@ -153,13 +229,11 @@ public class OperacionesBDD {
 
     public void insertPrestamo(Context context, String idProducto, String tipoPrestamo, String socia, String cantidad){
 
-        SQLiteDatabase db= adminDb.getWritableDatabase();
+        SQLiteDatabase db= adminBDD.getWritableDatabase();
         Fecha fecha= new Fecha();
-        int nextMId=((MyAplication)context).getNextMId();
 
         //insertando nuevo movimiento en tabla movimientos
         ContentValues dataMovimiento = new ContentValues();
-        //dataMovimiento.put(Movimientos.ID_MOVIMIENTO, nextMId);
         dataMovimiento.put(Movimientos.ID_PRODUCTO, idProducto);
         dataMovimiento.put(Movimientos.FECHA, fecha.getStringDMAH());
         long idMovimiento= db.insert(Tablas.MOVIMIENTOS,null, dataMovimiento);
@@ -189,7 +263,7 @@ public class OperacionesBDD {
 
     public void insertCompra(Context context, ArrayList<Compra> listaCompras){
 
-        SQLiteDatabase db= adminDb.getWritableDatabase();
+        SQLiteDatabase db= adminBDD.getWritableDatabase();
 
         ContentValues dataCompra = new ContentValues();
         ContentValues dataMovimiento = new ContentValues();
@@ -197,10 +271,8 @@ public class OperacionesBDD {
         for (int i = 0; i < listaCompras.size(); i++) {
 
             //pidiendo el ID movimiento siguiente al ultimo registrado
-            int nextMId=((MyAplication)context).getNextMId();
 
             //insertando nuevo movimiento en tabla movimientos
-            //dataMovimiento.put(Movimientos.ID_MOVIMIENTO, nextMId);
             dataMovimiento.put(Movimientos.ID_PRODUCTO, listaCompras.get(i).getCodigoProducto());
             dataMovimiento.put(Movimientos.FECHA, listaCompras.get(i).getFecha());
             long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
@@ -218,9 +290,8 @@ public class OperacionesBDD {
             //actualizando cambios en listaProductos(MainActivity)
             Producto p = new Producto(listaCompras.get(i).getCodigoProducto());
             int pos = listaProductos.indexOf(p);
-            Toast.makeText(context, String.valueOf(pos), Toast.LENGTH_LONG).show();
             listaProductos.get(pos).sumarACantidad(listaCompras.get(i).getCantidad());
-            adapterRecycler.notifyItemChanged(pos);
+            recyclerAdapter.notifyItemChanged(pos);
 
         }
         db.close();
@@ -228,7 +299,7 @@ public class OperacionesBDD {
 
     public void insertVenta(Context context, ArrayList<Venta> listaVentas){
 
-        SQLiteDatabase db= adminDb.getWritableDatabase();
+        SQLiteDatabase db= adminBDD.getWritableDatabase();
 
         ContentValues dataProducto = new ContentValues();
         ContentValues dataVenta = new ContentValues();
@@ -237,7 +308,6 @@ public class OperacionesBDD {
         for (int i = 0; i < listaVentas.size(); i++) {
 
             //pidiendo el ID movimiento siguiente al ultimo registrado
-            int nextMId=((MyAplication)context).getNextMId();
 
             //insertando nuevo movimiento en tabla movimientos
             dataMovimiento.put(Movimientos.ID_PRODUCTO, listaVentas.get(i).getCodigoProducto());
@@ -255,11 +325,11 @@ public class OperacionesBDD {
             String comando = ("UPDATE "+ Tablas.PRODUCTOS +" SET "+ Productos.CANTIDAD +" = "+ Productos.CANTIDAD +" - "+listaVentas.get(i).getCantidad()+" WHERE "+ Productos.ID_PRODUCTO +" = "+ listaVentas.get(i).getCodigoProducto());
             db.execSQL(comando);
 
-            //actualizando cambios en listaProductos(MainActivity) y adapterRecycler
+            //actualizando cambios en listaProductos(MainActivity) y recyclerAdapter
             Producto p = new Producto(listaVentas.get(i).getCodigoProducto());
             int pos = listaProductos.indexOf(p);
-            listaProductos.get(pos).sumarACantidad(listaVentas.get(i).getCantidad());
-            adapterRecycler.notifyItemChanged(pos);
+            listaProductos.get(pos).restarACantidad((listaVentas.get(i).getCantidad()));
+            recyclerAdapter.notifyItemChanged(pos);
 
         }
         db.close();
@@ -267,7 +337,7 @@ public class OperacionesBDD {
 
     public long insertLinea(Context context, String nombreLinea, int codigoColor){
 
-        SQLiteDatabase db = adminDb.getWritableDatabase();
+        SQLiteDatabase db = adminBDD.getWritableDatabase();
 
         //agregarndo nueva linea a tabla lineas
         ContentValues dataLinea = new ContentValues();

@@ -16,15 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.example.stocks.R;
-import com.example.stocks.model.AdminDb;
 import com.example.stocks.model.Data.Linea;
 import com.example.stocks.model.Data.Producto;
 import com.example.stocks.model.Data.Fecha;
-import com.example.stocks.model.Data.Tabla;
 import com.example.stocks.sql.OperacionesBDD;
 import com.example.stocks.ui.adapter.RecyclerAdapter;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -36,10 +33,15 @@ import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
-import static com.example.stocks.model.AdminDb.APP_PAQUETE;
-import static com.example.stocks.model.AdminDb.NOMBRE_DB;
+import static com.example.stocks.sql.AdminBDD.APP_PAQUETE;
+import static com.example.stocks.sql.AdminBDD.NOMBRE_DB;
 
 /*
+HACER
+      -ver problema de tamaño de fuente dependieno el celular
+      -chequeo de que nombre y codigo correspondan a un mismo producto, en act agregar compra y agregar venta
+
+
 ULTIMOS CAMBIOS
 10-11
 -desactive constructor de objeto Linea(idLinea)
@@ -55,11 +57,59 @@ ULTIMOS CAMBIOS
 13-12
 -comienzo de mejoras en la administración y uso de db
 
-14-14
+14-12
 -se sigue con las mejoras en la administración y uso de db, específicamente el archivo OperacionesBDD
 -se integró archivo insertOnDB en OperacionesBDD
 -se comentó comando de idMovimiento, en OperacioneBDD, al agregar compra prestamo o venta,(supuestamente no es necesario porque esta definido en la db como autoincrement)
 -se debugueo luego de los cambios
+-se elimino MyAplication
+
+28-1
+-debugueo de activity agregarventa
+-se borraron procedimientos sin uso de objeto Tabla: newCellDefault y newCell2
+-se hicieron correciones en los xml de activities de agregar compra y agregar venta
+-se mejoró la previsualizacion de stock en activity agregar venta
+
+3-3
+-se pasò act agregarcompra y agregarventa de relativeLayout a constraintLayout
+-debugueo de activity agregarcompra
+-debugueo de activity agregarventa
+
+4-3
+-se agregó filtro en activity agregar venta y activity agregar compra:
+    -cuando se intenta ingresar un producto q no esta registrado
+    -cantidad ingresada < 0
+-se modificó la configuración de algunas de las activitys para evitar que se reinicie al rotar la pantalla
+
+6-3
+-se solucionó problema de tablas de resumen en activitys agregar compra y agregar venta
+
+17-4
+-se continua creando la activity info de productos (ultios movieminetos)
+-se creo metodo .ultimosMovimientos para clase OperacionesBDD que se usa en ActInfoProducto
++se busca implementar codigo para que al presionar un producto en la lista (recyclerList) muestre ActInfoProducto con los datos correspondientes a ese producto
+-se agrego metodo addRow1() en objeto Tabls, que a diferencia de addFila() no usa arreglo de ancho de columnas
+
+21-4
+-se quitó boton "limpiar campos" de activities AgregarVenta y AgregarCompra
+-se hicieron cambios en el codigo del objeto Tabla referidos al parametro "weight column" para una mejor visualización de los datos en la tabla
+    -por dichos cambios, se adaptó el codigo en las activities AgregarVenta, AgregarCompra y InfoProd para su correcto funcionamiento
+-se implemento codigo para mostrar últimos movimiento (ejecutando el activity InfoProd)del producto seleccionado en el recyclerView del MainActivity
+
+22-4
+-se agregó codigo en el objeto Tabla para poder personalizar el parametro maxEMS por columna
+
+28-4
+- se creo el fragment para detalles de movimientos y se empezo a trasladar la partes grafica del activityInfoProd a un nuevo fragmentUltimosMovimientos
+
+3-5
+-se traslado la interfaz del ActInfoPod al FragmentUltimosMovimientos con éxito
+*se comenzó a implementar codigo para que al seleccionar una fila del la tabla ultimos movimientos muestre el fragmentDetalles
+
+4-5
+-se termino de implementar el cambio anterior, solo falta la carga y presentación de datos correspondientes a dicho movimiento en el fragment
+*revisar si los metodos de OperacionesBDD siguen la inea del proposito de este objeto
+
 
 
  */
@@ -67,11 +117,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public static ArrayList<Linea> listaLineas;
     public static ArrayList<Producto> listaProductos;
-    public static RecyclerAdapter adapterRecycler;
+    public static RecyclerAdapter recyclerAdapter;
     private RecyclerView recyclerProductos;
-    private TableLayout tableLayout1;
-    private AdminDb adminDb;
-    private Tabla tabla;
     private int permissionWrite;
     private static final int MY_PERMISSIONS_WRITE_EXTERNAL = 1;
     private static final int MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 1;
@@ -83,11 +130,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
 
         //INICIA EL ADMINISTRADOR DE BASE DE DATOS
-        //adminDb = new AdminDb(this);
-        operacionesBDD = OperacionesBDD.instancia(getApplicationContext());
+        operacionesBDD = OperacionesBDD.instanceOf(getApplicationContext());
+
+        //CARGA LAS LISTAS DE DATOS
         listaProductos = new ArrayList<>();
         listaLineas = new ArrayList<>();
-
         cargarListaLineas();
         cargarListaProductos();
 
@@ -99,8 +146,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         final FloatingActionButton fabAgregarProducto = (FloatingActionButton) findViewById(R.id.fabAgregarProducto);
 
         //CARGANDO CONTENIDO DE RECYCLERVIEW
-        adapterRecycler = new RecyclerAdapter(getApplicationContext());//listaProductos);
-        recyclerProductos.setAdapter(adapterRecycler);
+        recyclerAdapter = new RecyclerAdapter(getApplicationContext());//listaProductos);
+        recyclerAdapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentInfoProducto = new Intent(getApplicationContext(), ActInfoProducto.class);
+                intentInfoProducto.putExtra("codigoProducto", listaProductos.get(recyclerProductos.getChildAdapterPosition(v)).getCodigo());
+                intentInfoProducto.putExtra("nombreProducto", listaProductos.get(recyclerProductos.getChildAdapterPosition(v)).getNombre());
+                startActivity(intentInfoProducto);
+
+            }
+        });
+        recyclerProductos.setAdapter(recyclerAdapter);
 
         //ASIGNANDO FUNCIONES DE LOS BOTONES DEL MENU FLOTANTE
         fabAgregarMovimiento.setOnClickListener(new View.OnClickListener() {
@@ -120,16 +177,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onResume() {
         super.onResume();
-        adapterRecycler.notifyDataSetChanged();
+        recyclerAdapter.notifyDataSetChanged();
 
     }
 
     //CARGA "ARRAYLIST<LINEAS> listaLineas" CON LOS PRODUCTOS QUE SE ENCUENTRAN EN LA BASE DE DATOS
     public void cargarListaLineas(){
         try {
-            Cursor cursor = operacionesBDD.cursorLineas();//db.query(AdminDb.Tablas.LINEAS, "*", null, null, null, null, null);
+            Cursor cursor = operacionesBDD.cursorLineas();//db.query(AdminBDD.Tablas.LINEAS, "*", null, null, null, null, null);
             if (cursor.moveToFirst()) {
-
                 listaLineas.add(new Linea(cursor.getInt(0), cursor.getString(1), cursor.getInt(2)));
                 while (cursor.moveToNext()) {
                     listaLineas.add(new Linea(cursor.getInt(0), cursor.getString(1), cursor.getInt(2)));
@@ -147,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Cursor cursor = operacionesBDD.cursorTablaProductos();//db.query(TABLA_PRODUCTOS, campos, null, null, null, null, null);
             if (cursor.moveToFirst()) {
                 listaProductos.add(new Producto(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
-
                 while (cursor.moveToNext()) {
                     listaProductos.add(new Producto(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3)));
                 }
@@ -155,8 +210,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error al cargar lista de productos", Toast.LENGTH_LONG).show();
         }
-
-        //Toast.makeText(getApplicationContext(), String.valueOf(operacionesBDD.dbClose()), Toast.LENGTH_LONG).show();
 
     }
 
@@ -187,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                adapterRecycler.updateList(listaProductos);
+                recyclerAdapter.updateList(listaProductos);
                 return true;
             }
         });
@@ -212,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (nombreProducto.contains(busqueda.toLowerCase()) || codigoProducto.contains(busqueda.toLowerCase())){
                         listaFiltrada.add(producto);
                     }
-                adapterRecycler.updateList(listaFiltrada);
+                recyclerAdapter.updateList(listaFiltrada);
            }
 
         }catch(Exception e){
@@ -250,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (internalDirectoy.canWrite()) {
                     String directorioDB = "//data//" + APP_PAQUETE + "//databases//" + NOMBRE_DB;
                     Fecha fecha = new Fecha();
-                    String sFecha = String.valueOf(fecha.getLong());
+                    String sFecha = String.valueOf(fecha.getLongAMDH());
                     String nameBackupDB = "StocksDb" + sFecha + ".db";
                     File exportFile = new File(appData, directorioDB);
                     File exportTo = new File(internalDirectoy, nameBackupDB);
@@ -274,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    //PORCEDIMIENTO DEL BOTON IMPORTAR DB (desde "/StockS/importDB.db)
+    //PORCEDIMIENTO DEL BOTON IMPORTAR DB (desde "/StockS/importDB.db)3
     public void importDB(View view) {
 
         //se piden los permisos de lectura de almacenamiento externo
@@ -288,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             //si no existe el directorio /StockS en la memoria interna, lo crea
             if (!internalDirectoy.exists()) {
                 if (internalDirectoy.mkdir()) {
-                    Toast.makeText(getBaseContext(), "se creo /stocks", Toast.LENGTH_LONG)
+                    Toast.makeText(getBaseContext(), "Se creó la carpeta /stocks en la Tarjeta de memoria", Toast.LENGTH_LONG)
                             .show();
                 }
 

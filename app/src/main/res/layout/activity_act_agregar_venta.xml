@@ -1,136 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:gravity="clip_horizontal"
-tools:context=".ui.ActAgregarVenta">
-
-<ScrollView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="-5dp"
-        android:layout_marginEnd="-1dp"
-        android:gravity="center|top"
-        android:orientation="vertical">
+        android:gravity="center"
+        tools:context=".ui.ActAgregarVenta">
+
 
         <TextView
             android:id="@+id/AV_text_tituloActivity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:maxLines="4"
             android:text="AGREGAR VENTA"
             android:textAllCaps="true"
             android:textColor="#030000"
             android:textSize="24sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <AutoCompleteTextView
             android:id="@+id/AV_autoC_codigoProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="8dp"
             android:hint="Código del Producto"
             android:inputType="number"
             android:maxLength="8"
-            android:singleLine="true" />
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_autoC_nombreProducto" />
 
         <AutoCompleteTextView
             android:id="@+id/AV_autoC_nombreProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:hint="Nombre del Producto"
-            android:singleLine="true" />
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
-        <EditText
-            android:id="@+id/AV_edit_cantidad"
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:ems="10"
-            android:hint="Cantidad"
-            android:inputType="number"
-            android:maxLength="2"
-            android:singleLine="true" />
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_autoC_codigoProducto">
+
+            <EditText
+                android:id="@+id/AV_edit_cantidad"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="Cantidad"
+                android:inputType="number"
+                android:maxLength="2"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/AV_text_cantidadEnStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:gravity="center"
+                android:textColor="#409644"
+                android:textSize="20sp"
+                tools:text="0" />
+
+            <TextView
+                android:id="@+id/textEnStock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:gravity="center"
+                android:text="en stock"
+                android:textColor="#409644"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/AV_edit_monto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
-            android:hint="Monto"
+            android:hint="$ por unidad"
             android:inputType="numberDecimal"
-            android:singleLine="true" />
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
         <EditText
             android:id="@+id/AV_edit_cliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="Cliente"
             android:inputType="textPersonName"
-            android:singleLine="true" />
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_edit_monto" />
 
         <Button
             android:id="@+id/AV_button_aResumen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AGREGAR A RESUMEN" />
+            android:layout_marginTop="8dp"
+            android:onClick="agregarVentaAResumen"
+            android:text="AGREGAR A RESUMEN"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_edit_cliente" />
+
+        <Button
+            android:id="@+id/AV_button_limpiarResumen"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:background="#EDEE7474"
+            android:gravity="center"
+            android:onClick="limpiarResumen"
+            android:text="limpiar \nresumen"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/AV_button_aResumen"
+            app:layout_constraintEnd_toStartOf="@+id/AV_button_aResumen"
+            app:layout_constraintTop_toTopOf="@+id/AV_button_aResumen" />
+
+
+        <TextView
+            android:id="@+id/AV_text_ResumenVenta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Resumen de venta"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_button_aResumen" />
 
         <TableLayout
             android:id="@+id/AV_tableL_resumen"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="left"
-            android:background="#ECECEC"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/AV_button_limpiarCampos"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:background="#EDEE7474"
-                android:onClick="limpiarCampos"
-                android:text="Limpiar campos" />
-
-            <Button
-                android:id="@+id/AV_button_limpiarResumen"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:background="#EDEE7474"
-                android:onClick="limpiarResumen"
-                android:text="limpiar resumen" />
-        </LinearLayout>
+            android:background="#ECECEC"
+            android:shrinkColumns="2,3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_text_ResumenVenta" />
 
         <Button
             android:id="@+id/AV_button_registrar"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="REGISTRAR VENTA" />
+            android:layout_marginTop="24dp"
+            android:onClick="registrarVenta"
+            android:text="REGISTRAR VENTA"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/AV_tableL_resumen" />
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="0dp"
+            app:layout_constraintGuide_percent="0.20" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
-
-</RelativeLayout>

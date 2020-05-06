@@ -1,5 +1,6 @@
 package com.example.stocks.model.Data;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,8 +18,20 @@ public class Fecha {
         cal = new GregorianCalendar();
         date = cal.getTime();
     }
+
+    public Fecha(String stringFecha){
+        cal = new GregorianCalendar();
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        try {
+            this.date = format.parse(stringFecha);
+        }catch (ParseException e){
+
+        }
+    }
+
     //formato usado para nombre de backup
-    public long getLong(){
+
+    public long getLongAMDH(){
         SimpleDateFormat formatoLong = new SimpleDateFormat("yyyyMMddHHmm");
         return Long.parseLong(formatoLong.format(date));
     }

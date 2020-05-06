@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import static com.example.stocks.ui.MainActivity.listaLineas;
 import static com.example.stocks.ui.MainActivity.listaProductos;
-import static com.example.stocks.ui.MainActivity.adapterRecycler;
+import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 
 public class ActAgregarProducto extends AppCompatActivity {
 
@@ -38,14 +38,14 @@ public class ActAgregarProducto extends AppCompatActivity {
         getSupportActionBar().hide();
 
         //iniciando admins bdd
-        operacionesBDD= OperacionesBDD.instancia(getApplicationContext());
+        operacionesBDD = OperacionesBDD.instanceOf(getApplicationContext());
 
         //inicializando views
         editCodigo = (EditText) findViewById(R.id.AP_edit_Codigo);
         editNombre = (EditText) findViewById(R.id.AP_edit_Nombre);
         spinnerLinea = (Spinner) findViewById(R.id.AP_spinner_Linea);
 
-        cargarDataSpinner();
+        cargaListaSpinner();
 
         Button agregarProducto = (Button) findViewById(R.id.AP_button_Agrergar);
 
@@ -59,29 +59,24 @@ public class ActAgregarProducto extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cargarDataSpinner();
+        cargaListaSpinner();
 
     }
 
-    public void cargarDataSpinner() {
+    public void cargaListaSpinner() {
         //carga arrayLineas
         arrayLineas = new ArrayList<>();
-        if (!listaLineas.isEmpty()) {
-            arrayLineas.add("Ninguna");
-            for (Linea l : listaLineas) {
-
-                arrayLineas.add(l.getNombre());
-
-            }
+        arrayLineas.add("Ninguna");
+        for (Linea l : listaLineas) {
+            arrayLineas.add(l.getNombre());
         }
-
-        //carga datos en spinner
-        if (!arrayLineas.isEmpty()) {
+        //carga lista en spinner
+        if(!arrayLineas.isEmpty()){
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayLineas);
             spinnerLinea.setAdapter(arrayAdapter);
         }
 
-    }
+}
 
 
     //PROCEDIMIENTO BOTON "AGREGAR LINEA"
@@ -102,7 +97,7 @@ public class ActAgregarProducto extends AppCompatActivity {
             if (!editCodigo.getText().toString().isEmpty() && editCodigo.getText().toString().length() == 8) {
                 if (!spinnerLinea.getSelectedItem().toString().equals("Ninguna")) {
 
-                    //chequeo de nombre duplicado en una misma linea
+                    //chequeo de nombre duplicado en una misma linea de prdocutos
                     for (Producto p : listaProductos) {
                         if (p.getNombre().equals(editNombre.getText().toString()) && p.getLinea().equals(spinnerLinea.getSelectedItem().toString())) {
                             checkOk = false;
@@ -116,7 +111,7 @@ public class ActAgregarProducto extends AppCompatActivity {
                     if (listaProductos.indexOf(p) == -1) {
 
                         listaProductos.add(p);
-                        adapterRecycler.notifyItemInserted(listaProductos.size() - 1);
+                        recyclerAdapter.notifyItemInserted(listaProductos.size() - 1);
 
                         //insertando producto en bdd
                         operacionesBDD.insertProducto(getApplicationContext(), editCodigo.getText().toString(), editNombre.getText().toString(), editCantidad.getText().toString(), spinnerLinea.getSelectedItem().toString());
