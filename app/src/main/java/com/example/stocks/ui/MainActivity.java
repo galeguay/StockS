@@ -108,7 +108,7 @@ ULTIMOS CAMBIOS
 
 4-5
 -se termino de implementar el cambio anterior, solo falta la carga y presentación de datos correspondientes a dicho movimiento en el fragment
-*revisar si los metodos de OperacionesBDD siguen la inea del proposito de este objeto
+*revisar si los metodos de OperacionesBDD siguen la linea del proposito de este objeto
 
 
 
@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public static ArrayList<Producto> listaProductos;
     public static RecyclerAdapter recyclerAdapter;
     private RecyclerView recyclerProductos;
-    private int permissionWrite;
     private static final int MY_PERMISSIONS_WRITE_EXTERNAL = 1;
     private static final int MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 1;
     private OperacionesBDD operacionesBDD;
@@ -139,14 +138,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         cargarListaProductos();
 
         //INICIALIZANDO VIEWS
-        recyclerProductos = (RecyclerView)findViewById(R.id.rvMAListaProductos);
+        recyclerProductos = findViewById(R.id.rvMAListaProductos);
         recyclerProductos.setLayoutManager(new LinearLayoutManager(this));
-        final FloatingActionsMenu fabMenu = (FloatingActionsMenu) findViewById(R.id.fabMenu);
-        final FloatingActionButton fabAgregarMovimiento = (FloatingActionButton) findViewById(R.id.fabAgregarMovimiento);
-        final FloatingActionButton fabAgregarProducto = (FloatingActionButton) findViewById(R.id.fabAgregarProducto);
+        final FloatingActionsMenu fabMenu = findViewById(R.id.fabMenu);
+        final FloatingActionButton fabAgregarMovimiento = findViewById(R.id.fabAgregarMovimiento);
+        final FloatingActionButton fabAgregarProducto = findViewById(R.id.fabAgregarProducto);
 
         //CARGANDO CONTENIDO DE RECYCLERVIEW
-        recyclerAdapter = new RecyclerAdapter(getApplicationContext());//listaProductos);
+        recyclerAdapter = new RecyclerAdapter();
         recyclerAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

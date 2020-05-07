@@ -1,6 +1,5 @@
 package com.example.stocks.ui.adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +21,16 @@ import static com.example.stocks.ui.MainActivity.listaProductos;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolderItems> implements View.OnClickListener {
 
     private ArrayList<Producto> listaProductosMostrados;
-    private Context context;
     private View.OnClickListener listener;
 
-    public RecyclerAdapter(Context context){//ArrayList<Producto> listaProductos){
+    public RecyclerAdapter(){
         this.listaProductosMostrados= listaProductos;
-        this.context = context;
     }
 
     @NonNull
     @Override
     public ViewHolderItems onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_main_item, null, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_main_item, parent, false);
         view.setOnClickListener(this);
         return new ViewHolderItems(view);
     }
@@ -76,10 +73,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public ViewHolderItems(@NonNull View itemView) {
             super(itemView);
 
-            tCodigo = (TextView) itemView.findViewById(R.id.MA_text_CodigoProducto);
-            tNombre = (TextView) itemView.findViewById(R.id.MA_text_NombreProducto);
-            tCantidad = (TextView) itemView.findViewById(R.id.tIRCantidad);
-            cardView = (CardView) itemView.findViewById(R.id.MA_cardView);
+            tCodigo = itemView.findViewById(R.id.MA_text_CodigoProducto);
+            tNombre = itemView.findViewById(R.id.MA_text_NombreProducto);
+            tCantidad = itemView.findViewById(R.id.tIRCantidad);
+            cardView = itemView.findViewById(R.id.MA_cardView);
 
         }
     }

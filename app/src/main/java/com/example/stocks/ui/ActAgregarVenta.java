@@ -25,6 +25,7 @@ import com.example.stocks.sql.OperacionesBDD;
 import java.util.ArrayList;
 
 import static com.example.stocks.ui.MainActivity.listaProductos;
+import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 
 public class ActAgregarVenta extends AppCompatActivity {
 
@@ -184,7 +185,7 @@ public class ActAgregarVenta extends AppCompatActivity {
             }*/
 
 
-            //agreagando venta a bdd
+            //agreagando venta a ArrayList listaVentas
             Venta nuevaVenta = new Venta(Integer.parseInt(autoCCodigoProducto.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()), editCliente.getText().toString());
             listaVentas.add(nuevaVenta);
             int[] maxEms= {0,3,0};
@@ -210,7 +211,16 @@ public class ActAgregarVenta extends AppCompatActivity {
     //PROCEDIMIENTO BOTON "REGISTRAR VENTA"
     public void registrarVenta(View view) {
 
-        operacionesBDD.insertVenta(this.getApplicationContext(), listaVentas);
+        for (int i = 0; i < listaVentas.size(); i++) {
+
+            operacionesBDD.insertVenta(listaVentas.get(i));
+            Producto p = new Producto(listaVentas.get(i).getCodigoProducto());
+            int pos = listaProductos.indexOf(p);
+            listaProductos.get(pos).restarACantidad((listaVentas.get(i).getCantidad()));
+            recyclerAdapter.notifyItemChanged(pos);
+
+        }
+
         Toast.makeText(this, "La venta se registró correctamente", Toast.LENGTH_LONG);
         ActAgregarMovimiento.fa.finish();
         this.finish();

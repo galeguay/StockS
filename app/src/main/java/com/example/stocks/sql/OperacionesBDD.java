@@ -131,7 +131,11 @@ public class OperacionesBDD {
     }
 
     public ArrayList<String[]> listaUltimosMovimientos(int idProducto){
-
+/**
+ * Devuelve un ArrayList con los ultimos movimientos del producto pasado.
+ * El orden de las columnas es CANTIDAD, TIPO DE MOVIMIENTO, FECHA, ID MOVIMIENTO
+ * @param int id o código del producto
+ */
         SQLiteDatabase db = adminBDD.getReadableDatabase();
         ArrayList listaUltimosMovimientos = new ArrayList<String[]>();
 
@@ -201,13 +205,8 @@ public class OperacionesBDD {
         return aux;
     }
 
-    public boolean dbClose(){
-        boolean aux= false;
-        if(adminBDD != null) {
-            aux=false;
-            adminBDD.close();
-        }else {aux= true;}
-        return aux;
+    public void dbClose(){
+        adminBDD.close();
     }
 
     public void insertProducto(Context context, String codigo, String nombre, String cantidad, String linea){
@@ -297,7 +296,12 @@ public class OperacionesBDD {
         db.close();
     }
 
-    public void insertVenta(Context context, ArrayList<Venta> listaVentas){
+    public int insertVenta(Venta venta){
+/**
+ * Metodo que inserta una venta nueva en la base de datos.
+ * @param Venta venta
+ *
+ */
 
         SQLiteDatabase db= adminBDD.getWritableDatabase();
 
@@ -305,33 +309,22 @@ public class OperacionesBDD {
         ContentValues dataVenta = new ContentValues();
         ContentValues dataMovimiento = new ContentValues();
 
-        for (int i = 0; i < listaVentas.size(); i++) {
+        //insertando nuevo movimiento en tabla movimientos
+        dataMovimiento.put(Movimientos.ID_PRODUCTO, venta.getCodigoProducto());
+        dataMovimiento.put(Movimientos.FECHA, venta.getFecha());
+        long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
 
-            //pidiendo el ID movimiento siguiente al ultimo registrado
+        //insertando nueva venta en tabla ventas
+        dataVenta.put(Ventas.ID_MOVIMIENTO, idMovimiento);
+        dataVenta.put(Ventas.ID_CLIENTE, venta).getCliente());
+        dataVenta.put(Ventas.CANTIDAD, venta.getCantidad());
+        dataVenta.put(Ventas.MONTO, venta.getMontoUnitario());
+        db.insert(Tablas.VENTAS,null,dataVenta);
 
-            //insertando nuevo movimiento en tabla movimientos
-            dataMovimiento.put(Movimientos.ID_PRODUCTO, listaVentas.get(i).getCodigoProducto());
-            dataMovimiento.put(Movimientos.FECHA, listaVentas.get(i).getFecha());
-            long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
+        //actualizando cambios en cantidad en el producto dentro de tabla productos
+        String comando = ("UPDATE "+ Tablas.PRODUCTOS +" SET "+ Productos.CANTIDAD +" = "+ Productos.CANTIDAD +" - "+venta.getCantidad()+" WHERE "+ Productos.ID_PRODUCTO +" = "+ venta.getCodigoProducto());
+        db.execSQL(comando);
 
-            //insertando nueva venta en tabla ventas
-            dataVenta.put(Ventas.ID_MOVIMIENTO, idMovimiento);
-            dataVenta.put(Ventas.ID_CLIENTE, listaVentas.get(i).getCliente());
-            dataVenta.put(Ventas.CANTIDAD, listaVentas.get(i).getCantidad());
-            dataVenta.put(Ventas.MONTO, listaVentas.get(i).getMontoUnitario());
-            db.insert(Tablas.VENTAS,null,dataVenta);
-
-            //actualizando cambios en cantidad en el producto dentro de tabla productos
-            String comando = ("UPDATE "+ Tablas.PRODUCTOS +" SET "+ Productos.CANTIDAD +" = "+ Productos.CANTIDAD +" - "+listaVentas.get(i).getCantidad()+" WHERE "+ Productos.ID_PRODUCTO +" = "+ listaVentas.get(i).getCodigoProducto());
-            db.execSQL(comando);
-
-            //actualizando cambios en listaProductos(MainActivity) y recyclerAdapter
-            Producto p = new Producto(listaVentas.get(i).getCodigoProducto());
-            int pos = listaProductos.indexOf(p);
-            listaProductos.get(pos).restarACantidad((listaVentas.get(i).getCantidad()));
-            recyclerAdapter.notifyItemChanged(pos);
-
-        }
         db.close();
     }
 
