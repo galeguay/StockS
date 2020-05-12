@@ -11,11 +11,7 @@ import android.widget.TextView;
  * @param actividad donde va a estar la tabla
  * @param TableLayout donde se va a imprimir la tabla
  * @param*/
-/**CREA TextView QUE SE USARá COMO CELDA DE LA TABLA
- @param String con el contenido de la celda
- @param int con el tamaño del texto de la celda
 
- */
 public class Tabla {
     private TableLayout tableLayout;
     private String[] header;
@@ -79,6 +75,7 @@ public class Tabla {
         txtCell= new TextView(context);
         txtCell.setTextSize(textSize);
         txtCell.setText(data);
+        txtCell.setHeight(50);
         //txtCell.setBackgroundColor(colorFondo);
         txtCell.setGravity(Gravity.CENTER);
         txtCell.setMaxEms(0);

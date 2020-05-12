@@ -15,8 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stocks.R;
+import com.example.stocks.model.Data.Compra;
 import com.example.stocks.model.Data.Fecha;
+import com.example.stocks.model.Data.Movimiento;
+import com.example.stocks.model.Data.Prestamo;
 import com.example.stocks.model.Data.Tabla;
+import com.example.stocks.model.Data.Venta;
 import com.example.stocks.sql.OperacionesBDD;
 
 /**
@@ -32,6 +36,8 @@ public class FragmentDetalleMovimiento extends Fragment {
     private OnFragmentInteractionListener mListener;
     private int idMovimiento;
     private String tipoMovimiento;
+    private Movimiento movimiento;
+    private View vista;
 
     public FragmentDetalleMovimiento() {
         // Required empty public constructor
@@ -51,9 +57,9 @@ public class FragmentDetalleMovimiento extends Fragment {
         super.onCreate(savedInstanceState);
 
             Bundle bundle = this.getArguments();
-            idMovimiento = bundle.getInt("idMovimiento");
+            //idMovimiento = bundle.getInt("idMovimiento");
             tipoMovimiento = bundle.getString("tipoMovimiento");
-            Toast.makeText(getContext(), tipoMovimiento, Toast.LENGTH_LONG).show();
+            movimiento = (Movimiento) bundle.getSerializable("movimiento");
 
     }
 
@@ -61,12 +67,12 @@ public class FragmentDetalleMovimiento extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // inflate the layout for this fragment
-        View vista = inflater.inflate(R.layout.fragment_detalle_movimiento, container, false);
+        vista = inflater.inflate(R.layout.fragment_detalle_movimiento, container, false);
 
         // asociando views
         TextView tvIdMovimiento = vista.findViewById(R.id.FDM_tv_idMovimiento);
         TableLayout tableLayout = vista.findViewById(R.id.FDM_tl_contenido);
-
+//TODO ARREGLAR TEXTVIEW ID MOVIMIENTO, NO SE VE EN PANTALLA
         // inicializando views básicos
         tvIdMovimiento.setText("ID MOVIMIENTO: "+ idMovimiento);
 
@@ -117,58 +123,65 @@ public class FragmentDetalleMovimiento extends Fragment {
     }
 
     private void cargarDatos(Tabla tabla) {
-        Cursor cursor = OperacionesBDD.instanceOf(getActivity()).cursorDetallesMovimiento(idMovimiento, tipoMovimiento);
-        if (cursor.moveToFirst()){
 
-            Fecha fecha = new Fecha(cursor.getString(0));
-            String[] fila = {"Fecha", fecha.getStringDMA()};
+    TextView tvTipoMovimiento = vista.findViewById(R.id.FDM_tv_tipoMov);
+
+            String[] fila = {"Fecha", movimiento.getFecha().getStringDMA()};
             tabla.addFila(fila);
 
-            fila = new String[]{"Cantidad", cursor.getString(2)};
+            fila = new String[]{"Cantidad", String.valueOf(movimiento.getCantidad())};
             tabla.addFila(fila);
+
 
             switch (tipoMovimiento) {
                 case "Compra":
 
-                    fila = new String[]{"Precio unitario", "$"+ cursor.getString(3)};
+                    tvTipoMovimiento.setText("COMPRA");
+                    Compra compra = (Compra) movimiento;
+                    fila = new String[]{"Precio unitario", "$"+ compra.getPrecioUnitario()};
                     tabla.addFila(fila);
 
-                    float total = Float.parseFloat(cursor.getString(3)) * Float.parseFloat(cursor.getString(2));
+                    float total = compra.getCantidad() * compra.getPrecioUnitario();
                     fila = new String[]{"Monto TOTAL", "$"+ total};
                     tabla.addFila(fila);
                     break;
 
                 case "Venta":
 
-                    fila = new String[]{"Precio unitario", "$"+ cursor.getString(3)};
+                    tvTipoMovimiento.setText("VENTA");
+                    Venta venta = (Venta) movimiento;
+                    fila = new String[]{"Precio unitario", "$"+ venta.getPrecioUnitario()};
                     tabla.addFila(fila);
 
-                    fila = new String[]{"Cliente", cursor.getString(4)};
+                    fila = new String[]{"Cliente", venta.getCliente()};
                     tabla.addFila(fila);
                     break;
 
                 case "Prestamo pedido" :
 
-                    fila = new String[]{"Tipo de prestamo", cursor.getString(3)};
+                    tvTipoMovimiento.setText("PRESTAMOS PEDIDO");
+                    Prestamo prestamoP = (Prestamo) movimiento;
+                    fila = new String[]{"Tipo de prestamo", prestamoP.getTipo()};
                     tabla.addFila(fila);
 
-                    fila = new String[]{"Socia", cursor.getString(4)};
+                    fila = new String[]{"Socia", prestamoP.getSocia()};
                     tabla.addFila(fila);
                     break;
-
+//TODO diferenciar o prestamos pedidos de dados
                 case "Prestamo dado":
 
-                    fila = new String[]{"Tipo de prestamo", cursor.getString(3)};
+                    tvTipoMovimiento.setText("PRESTAMO DADO");
+                    Prestamo prestamoD = (Prestamo) movimiento;
+                    fila = new String[]{"Tipo de prestamo", prestamoD.getTipo()};
                     tabla.addFila(fila);
 
-                    fila = new String[]{"Socia", cursor.getString(4)};
+                    fila = new String[]{"Socia", prestamoD.getSocia()};
                     tabla.addFila(fila);
                     break;
                 default:
             }
-        } else{
-            Toast.makeText(getActivity(), "Error de lectura en la base de datos",Toast.LENGTH_LONG).show();}
+        }
     }
 
 
-}
+

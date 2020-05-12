@@ -29,6 +29,16 @@ public class Fecha implements Comparable<Fecha>{
         }
     }
 
+    public Fecha(long longFecha){
+        cal = new GregorianCalendar();
+        SimpleDateFormat formatLong = new SimpleDateFormat("yyyyMMddHHmm");
+        try {
+            this.date = formatLong.parse(String.valueOf(longFecha));
+        }catch (ParseException e){
+
+        }
+    }
+
     @Override
     public int compareTo(Fecha fecha) {
         long aux = this.getLongAMDH() - fecha.getLongAMDH();

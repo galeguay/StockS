@@ -14,7 +14,12 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.stocks.R;
+import com.example.stocks.model.Data.Compra;
+import com.example.stocks.model.Data.Fecha;
+import com.example.stocks.model.Data.Movimiento;
+import com.example.stocks.model.Data.Prestamo;
 import com.example.stocks.model.Data.Tabla;
+import com.example.stocks.model.Data.Venta;
 import com.example.stocks.sql.OperacionesBDD;
 
 import java.util.ArrayList;
@@ -32,6 +37,7 @@ public class FragmentUltimosMovimientos extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public ArrayList<Movimiento> listaUltimosMovimientos;
 
     // TODO: Rename and change types of parameters
     private OnFragmentInteractionListener mListener;
@@ -121,20 +127,32 @@ public class FragmentUltimosMovimientos extends Fragment {
         String[] header = new String[]{"#", "Tipo", "Fecha"};
         float[] weightCol= new float[]{1.5f,4.25f,4.25f};
         Tabla tabla = new Tabla(getActivity(), tableLayout, weightCol, header);
-        ArrayList<String[]> lista = OperacionesBDD.instanceOf(getActivity()).listaUltimosMovimientos(codigoProducto);
-        if (!lista.isEmpty()) {
-            int i = 0;
-            while (i < lista.size()) {
-                tabla.addFila(lista.get(i));
+        listaUltimosMovimientos = OperacionesBDD.instanceOf(getActivity()).listaUltimosMovimientos(codigoProducto);
+        int i = 0;
+        if (!listaUltimosMovimientos.isEmpty()) {
+            //int i = 0;
+            while (i < listaUltimosMovimientos.size()) {
+                String tipoMovimiento = "Error";
+                if (listaUltimosMovimientos.get(i) instanceof Compra){
+                    tipoMovimiento = "Compra";
+                } else if (listaUltimosMovimientos.get(i) instanceof Venta) {
+                    tipoMovimiento = "Venta";
+                } else if (listaUltimosMovimientos.get(i) instanceof Prestamo){
+                    //TODO diferencias prastamo pedido de prestamo dado
+                    tipoMovimiento = "Prestamo";
+                }
+                //String[] detallesMovimient o= {listaUltimosMovimientos.get(i).getIdMovimiento(),listaUltimosMovimientos.get(i).getFecha(),listaUltimosMovimientos.get(i).getCantidad(),listaUltimosMovimientos.get(i)};
+                tabla.addFila(new String[]{String.valueOf(listaUltimosMovimientos.get(i).getCantidad()), tipoMovimiento, listaUltimosMovimientos.get(i).getFecha().getStringDMA()});
+                final Bundle argumentos = new Bundle();
+                //argumentos.putString("idMovimiento", String.valueOf(listaUltimosMovimientos.get(i).getIdMovimiento()));
+                argumentos.putString("tipoMovimiento", tipoMovimiento);
+                argumentos.putSerializable("movimiento", listaUltimosMovimientos.get(i));
+
                 tabla.getRow(i+1).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Bundle argumentos = new Bundle();
-                        TableRow row = (TableRow) v;
-                        TextView aux = (TextView)row.getChildAt(3);
-                        argumentos.putInt("idMovimiento", Integer.parseInt(aux.getText().toString()));
-                        aux = (TextView)row.getChildAt(1);
-                        argumentos.putString("tipoMovimiento", aux.getText().toString());
+
+
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.AIP_fl_contenedorFragments, FragmentDetalleMovimiento.newInstance(argumentos)).addToBackStack(null).commit();
                     }
                 });

@@ -1,16 +1,18 @@
 package com.example.stocks.model.Data;
 
-public class Compra extends Movimiento{
+import java.io.Serializable;
 
-    private double precioUnitario;
+public class Compra extends Movimiento {
 
-    public Compra(int idMovimiento, int codProducto, long fecha, int cantidad, double montoUnitario) {
-        super(idMovimiento, codProducto,fecha, cantidad);
+    private float precioUnitario;
+
+    public Compra(int idMovimiento, int codProducto, String fecha, int cantidad, float montoUnitario) {
+        super(idMovimiento, codProducto, fecha, cantidad);
         this.precioUnitario = montoUnitario;
     }
 
-    public Compra(int codProducto, long fecha, int cantidad, double montoUnitario) {
-        super(codProducto,fecha, cantidad);
+    public Compra(int codProducto, String fecha, int cantidad, float montoUnitario) {
+        super(codProducto, fecha, cantidad);
         this.precioUnitario = montoUnitario;
     }
 /*
@@ -21,11 +23,8 @@ public class Compra extends Movimiento{
         this.precioUnitario = montoUnitario;
     }*/
 
-    public double getPrecioUnitario() {
+    public float getPrecioUnitario() {
         return precioUnitario;
     }
 
-    public void setPrecioUnitario(double precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
 }

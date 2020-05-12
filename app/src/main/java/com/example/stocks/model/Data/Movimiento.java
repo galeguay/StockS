@@ -2,29 +2,37 @@ package com.example.stocks.model.Data;
 
 import android.graphics.Movie;
 
-public abstract class Movimiento implements Comparable<Movimiento>{
+import java.io.Serializable;
+
+public abstract class Movimiento implements Comparable<Movimiento>, Serializable {
 
     private int idMovimiento;
     private int idProducto;
-    private long fecha;
+    private Fecha fecha;
     private int cantidad;
 
-    public Movimiento(int idMovimiento, int idProducto, long fecha, int cantidad) {
+    public Movimiento(int idMovimiento, int idProducto, String fecha, int cantidad) {
 
         this.idMovimiento = idMovimiento;
         this.idProducto = idProducto;
-        this.fecha = fecha;
+        this.fecha = new Fecha(fecha);
         this.cantidad = cantidad;
 
     }
 
-    public Movimiento(int idProducto, long fecha, int cantidad){
+    public Movimiento(int idProducto, String fecha, int cantidad){
 
         this.idMovimiento = -1;
         this.idProducto = idProducto;
-        this.fecha = fecha;
+        this.fecha = new Fecha(fecha);
         this.cantidad = cantidad;
 
+    }
+
+    @Override
+    public int compareTo(Movimiento m) {
+        long aux = this.getFecha().getLongAMDH() - m.getFecha().getLongAMDH();
+        return (int) aux;
     }
 
     public int getIdMovimiento() {
@@ -35,17 +43,11 @@ public abstract class Movimiento implements Comparable<Movimiento>{
         return idProducto;
     }
 
-    public long getFecha() {
+    public Fecha getFecha() {
         return fecha;
     }
 
     public int getCantidad() {
         return cantidad;
-    }
-
-    @Override
-    public int compareTo(Movimiento o) {
-        long aux = this.fecha - o.getFecha();
-        return (int) aux;
     }
 }

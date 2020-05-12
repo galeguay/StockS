@@ -179,7 +179,7 @@ public class ActAgregarVenta extends AppCompatActivity {
             } else {
 
                 //agreagando venta a ArrayList listaVentas
-                Venta nuevaVenta = new Venta(Integer.parseInt(autoCCodigoProducto.getText().toString()), Long.parseLong(fecha.getStringDMAH()), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()), editCliente.getText().toString());
+                Venta nuevaVenta = new Venta(Integer.parseInt(autoCCodigoProducto.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Float.valueOf(editMonto.getText().toString()), editCliente.getText().toString());
                 listaVentas.add(nuevaVenta);
 
                 //agregando venta a tabla resumen (en pantalla)

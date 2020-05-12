@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.example.stocks.model.Data.Compra;
 import com.example.stocks.model.Data.Fecha;
@@ -137,54 +138,54 @@ public class OperacionesBDD {
         SQLiteDatabase db = adminBDD.getReadableDatabase();
         ArrayList listaUltimosMovimientos = new ArrayList<Movimiento>();
 
-        Cursor cursor = db.rawQuery( "SELECT C.idMovimiento, M.Fecha, C.cantidad, C.monto, FROM movimientos M, compras C WHERE C.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
+        Cursor cursor = db.rawQuery( "SELECT C.idMovimiento, M.fecha, C.cantidad, C.monto FROM movimientos M, compras C WHERE C.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
             Fecha fecha= new Fecha(cursor.getString(1));
             //Compra compra = new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3));
             //String[] row = {cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
-            listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3)));
+            listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3)));
             while (cursor.moveToNext()) {
                 fecha= new Fecha(cursor.getString(1));
-                listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3)));
+                listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3)));
             }
         }
         cursor.close();
-        cursor = db.rawQuery( "SELECT V.idMovimiento, M.Fecha, V.cantidad, V.monto, V.cliente FROM movimientos M, ventas V WHERE V.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
+        cursor = db.rawQuery( "SELECT V.idMovimiento, M.fecha, V.cantidad, V.monto, V.idCliente FROM movimientos M, ventas V WHERE V.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
             //Fecha fecha= new Fecha(cursor.getString(1));
             //String[] row = {cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
             //listaUltimosMovimientos.add(row);
             Fecha fecha= new Fecha(cursor.getString(1));
-            listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3), cursor.getString(4)));
+            listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3), cursor.getString(4)));
             while (cursor.moveToNext()) {
                 fecha= new Fecha(cursor.getString(1));
-                listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3), cursor.getString(4)));
+                listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3), cursor.getString(4)));
             }
         }
         cursor.close();
-        cursor = db.rawQuery( "SELECT P.idMovimiento, M.Fecha, P.cantidad, P.tipo, P.socia FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='pedido'AND M.idproducto = " + idProducto, null);
+        cursor = db.rawQuery( "SELECT P.idMovimiento, M.fecha, P.cantidad, P.tipoPrestamo, P.socia FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='pedido'AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
             /*Fecha fecha= new Fecha(cursor.getString(1));
             String[] row = {cursor.getString(0), "Prestamo pedido", fecha.getStringDMA(), cursor.getString(2)};
             listaUltimosMovimientos.add(row);*/
             Fecha fecha= new Fecha(cursor.getString(1));
-            listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
+            listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             while (cursor.moveToNext()) {
                 fecha= new Fecha(cursor.getString(1));
-                listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
+                listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             }
         }
         cursor.close();
-        cursor = db.rawQuery( "SELECT P.cantidad, M.Fecha, P.idMovimiento FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='dado' AND M.idproducto = " + idProducto,null );
+        cursor = db.rawQuery( "SELECT P.idMovimiento, M.fecha, P.cantidad, P.tipoPrestamo, P.socia FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='dado' AND M.idproducto = " + idProducto,null );
         if (cursor.moveToFirst()){
             /*Fecha fecha= new Fecha(cursor.getString(1));
             String[] row = {cursor.getString(0), "Prestamo dado", fecha.getStringDMA(), cursor.getString(2)};
             listaUltimosMovimientos.add(row);*/
             Fecha fecha= new Fecha(cursor.getString(1));
-            listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
+            listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             while (cursor.moveToNext()) {
                 fecha= new Fecha(cursor.getString(1));
-                listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
+                listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             }
         }
 /*
@@ -195,7 +196,8 @@ public class OperacionesBDD {
             }
 
         });*/
-        Collections.sort(listaUltimosMovimientos);
+        Comparator<Movimiento> comparador = Collections.reverseOrder();
+        Collections.sort(listaUltimosMovimientos, comparador);
         adminBDD.close();
         return listaUltimosMovimientos;
     }
@@ -264,7 +266,7 @@ public class OperacionesBDD {
 
         //insertando nuevo movimiento en tabla movimientos
         dataMovimiento.put(Movimientos.ID_PRODUCTO, compra.getIdProducto());
-        dataMovimiento.put(Movimientos.FECHA, compra.getFecha());
+        dataMovimiento.put(Movimientos.FECHA, compra.getFecha().getStringDMAH());
         long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
 
         //insertando nueva compra en tabla compras
@@ -296,7 +298,7 @@ public class OperacionesBDD {
 
         //insertando nuevo movimiento en tabla movimientos
         dataMovimiento.put(Movimientos.ID_PRODUCTO, venta.getIdProducto());
-        dataMovimiento.put(Movimientos.FECHA, venta.getFecha());
+        dataMovimiento.put(Movimientos.FECHA, venta.getFecha().getStringDMAH());
         long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
 
         //insertando nueva venta en tabla ventas

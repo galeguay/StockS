@@ -147,7 +147,7 @@ public class ActAgregarCompra extends AppCompatActivity {
                 }
 
                 //agregando compra a bdd
-                Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoProducto.getText().toString()), Long.parseLong(fecha.getStringDMAH()), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()));
+                Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoProducto.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Float.valueOf(editMonto.getText().toString()));
                 listaCompras.add(nuevaCompra);
 
                 //agregando compra a tabla resumen (en pantalla)
