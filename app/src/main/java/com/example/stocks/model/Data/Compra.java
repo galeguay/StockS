@@ -1,53 +1,31 @@
 package com.example.stocks.model.Data;
 
-public class Compra  {
+public class Compra extends Movimiento{
 
-    private int codigoMovimiento;
-    private int codigoProducto;
-    private String fecha;
-    private int cantidad;
-    private double montoUnitario;
+    private double precioUnitario;
 
-    public Compra(int codigoMovimiento, int codigoProducto, String fecha, int cantidad, double montoUnitario) {
-        this.codigoMovimiento = codigoMovimiento;
-        this.codigoProducto = codigoProducto;
-        this.fecha = fecha;
-        this.cantidad = cantidad;
-        this.montoUnitario = montoUnitario;
+    public Compra(int idMovimiento, int codProducto, long fecha, int cantidad, double montoUnitario) {
+        super(idMovimiento, codProducto,fecha, cantidad);
+        this.precioUnitario = montoUnitario;
     }
 
+    public Compra(int codProducto, long fecha, int cantidad, double montoUnitario) {
+        super(codProducto,fecha, cantidad);
+        this.precioUnitario = montoUnitario;
+    }
+/*
     public Compra(int codigoProducto, String fecha, int cantidad, double montoUnitario) {
         this.codigoProducto = codigoProducto;
         this.fecha = fecha;
         this.cantidad = cantidad;
-        this.montoUnitario = montoUnitario;
+        this.precioUnitario = montoUnitario;
+    }*/
+
+    public double getPrecioUnitario() {
+        return precioUnitario;
     }
 
-    public int getCodigoMovimiento() {
-        return codigoMovimiento;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public int getCodigoProducto() {
-        return codigoProducto;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public double getMontoUnitario() {
-        return montoUnitario;
-    }
-
-    public void setMontoUnitario(double montoUnitario) {
-        this.montoUnitario = montoUnitario;
+    public void setPrecioUnitario(double precioUnitario) {
+        this.precioUnitario = precioUnitario;
     }
 }

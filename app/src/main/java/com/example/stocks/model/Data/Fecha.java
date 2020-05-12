@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 // clase creada para simplificar el uso de fechas usando formato long
 // obtiene la hora y fecha actual al momento de inicializarla y tiene
 // metodos para obtener estos de diferentes formatos
-public class Fecha {
+public class Fecha implements Comparable<Fecha>{
 
     private Calendar cal;
     private Date date;
@@ -29,7 +29,15 @@ public class Fecha {
         }
     }
 
-    //formato usado para nombre de backup
+    @Override
+    public int compareTo(Fecha fecha) {
+        long aux = this.getLongAMDH() - fecha.getLongAMDH();
+        return (int) aux;
+    }
+
+    public Date getDate(){
+        return this.date;
+    }
 
     public long getLongAMDH(){
         SimpleDateFormat formatoLong = new SimpleDateFormat("yyyyMMddHHmm");

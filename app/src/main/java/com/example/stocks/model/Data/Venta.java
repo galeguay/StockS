@@ -1,56 +1,28 @@
 package com.example.stocks.model.Data;
 
-public class Venta{
+public class Venta extends Movimiento{
 
-    private int codigoMovimiento;
-    private int codigoProducto;
-    private String fecha;
-    private int cantidad;
-    private double montoUnitario;
+    private double precioUnitario;
     private String cliente;
 
-    public Venta(int codigoMovimiento, int codigoProducto, String fecha, int cantidad, double montoUnitario, String cliente) {
-        this.codigoMovimiento = codigoMovimiento;
-        this.codigoProducto = codigoProducto;
-        this.fecha = fecha;
-        this.cantidad = cantidad;
-        this.montoUnitario = montoUnitario;
+    public Venta(int idMovimiento, int codProducto, long fecha, int cantidad, double montoUnitario, String cliente) {
+        super(idMovimiento, codProducto,fecha, cantidad);
+        this.precioUnitario = montoUnitario;
         this.cliente = cliente;
     }
 
-    public Venta(int codigoProducto, String fecha, int cantidad, double montoUnitario, String cliente) {
-        this.codigoProducto = codigoProducto;
-        this.fecha = fecha;
-        this.cantidad = cantidad;
-        this.montoUnitario = montoUnitario;
+    public Venta(int codProducto, long fecha, int cantidad, double montoUnitario, String cliente) {
+        super(codProducto,fecha, cantidad);
+        this.precioUnitario = montoUnitario;
         this.cliente = cliente;
     }
 
-    public int getCodigoMovimiento() {
-        return codigoMovimiento;
-    }
-
-    public int getCodigoProducto() {
-        return codigoProducto;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public double getMontoUnitario() {
-        return montoUnitario;
+    public double getPrecioUnitario() {
+        return precioUnitario;
     }
 
     public String getCliente() {
         return cliente;
     }
 
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
 }

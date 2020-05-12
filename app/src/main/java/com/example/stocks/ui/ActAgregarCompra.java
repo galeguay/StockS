@@ -10,12 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TableLayout;
-import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.stocks.R;
-import com.example.stocks.sql.AdminBDD;
 import com.example.stocks.model.Data.*;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Tabla;
@@ -24,18 +21,15 @@ import com.example.stocks.sql.OperacionesBDD;
 import java.util.ArrayList;
 
 import static com.example.stocks.ui.MainActivity.listaProductos;
+import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 
 public class ActAgregarCompra extends AppCompatActivity {
 
-    private AdminBDD adminBDD;
-    private TableLayout tableLayoutAAC1;
     private Tabla tablaResumen;
     private EditText editCantidad, editMonto;
     private AutoCompleteTextView autoCNombreProducto, autoCCodigoProducto;
     private ArrayList<String> arrayCodigosProductos, arrayNombresProductos;
-
     private ArrayList<Compra> listaCompras;
-    private String[] header;
     private Button buttonRegistrarCompra;
     private OperacionesBDD operacionesBDD;
 
@@ -51,26 +45,23 @@ public class ActAgregarCompra extends AppCompatActivity {
         operacionesBDD= OperacionesBDD.instanceOf(getApplicationContext());
 
         //CARGANDO VIEWS
-        TextView tAgregarCompra = (TextView) findViewById(R.id.AC_text_agregarCompra);
-        tableLayoutAAC1 = (TableLayout) findViewById(R.id.AC_tableL_resumen);
-        autoCNombreProducto = (AutoCompleteTextView) findViewById(R.id.AC_autoC_nombreProducto);
-        autoCCodigoProducto = (AutoCompleteTextView) findViewById(R.id.AC_autoC_codigoProducto);
-        editCantidad = (EditText) findViewById(R.id.AC_edit_cantidad);
-        editMonto = (EditText) findViewById(R.id.AC_edit_monto);
-        Button buttonAgregar = (Button) findViewById(R.id.AC_button_agregar);
-        Button buttonLimpiarResumen = (Button) findViewById(R.id.AC_button_limpiarResumen);
-        buttonRegistrarCompra = (Button) findViewById(R.id.AC_button_registrar);
+        TableLayout tableLayoutAAC1 = findViewById(R.id.AC_tableL_resumen);
+        autoCNombreProducto = findViewById(R.id.AC_autoC_nombreProducto);
+        autoCCodigoProducto = findViewById(R.id.AC_autoC_codigoProducto);
+        editCantidad = findViewById(R.id.AC_edit_cantidad);
+        editMonto = findViewById(R.id.AC_edit_monto);
+        buttonRegistrarCompra = findViewById(R.id.AC_button_registrar);
         buttonRegistrarCompra.setEnabled(false);
 
         //inicializando tabla
-        header = new String[]{"#", "Producto", "$ por unidad"};
+        String[] header = new String[]{"#", "Producto", "$ por unidad"};
         float[] weightCol= new float[]{1.5f,6f,2.5f};
         tablaResumen = new Tabla(this, tableLayoutAAC1, weightCol, header);
 
         //INICIALIZANDO VARIABLES
-        listaCompras = new ArrayList<Compra>();
-        arrayCodigosProductos = new ArrayList<String>();
-        arrayNombresProductos = new ArrayList<String>();
+        listaCompras = new ArrayList<>();
+        arrayCodigosProductos = new ArrayList<>();
+        arrayNombresProductos = new ArrayList<>();
 
     }
 
@@ -81,10 +72,10 @@ public class ActAgregarCompra extends AppCompatActivity {
 
         //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
         //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
         autoCCodigoProducto.setAdapter(adapterCodigos);
 
-        //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el codigo correspondiente en el autoCompleteNombre
+        //al seleccionar un elemento en el autoCompleteNombre, se carga automaticamente el codigo correspondiente en el autoCompleteCodigo
         autoCCodigoProducto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -94,7 +85,7 @@ public class ActAgregarCompra extends AppCompatActivity {
         });
 
         //configurando autoCompleteNombre
-        ArrayAdapter<String> adapterNombres = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
+        ArrayAdapter<String> adapterNombres = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
         autoCNombreProducto.setAdapter(adapterNombres);
 
         //al seleccionar un elemento en el autoCompleteNombre, se complete automaticamente el nombre correspondiente en el autoCompleteCodigo
@@ -121,65 +112,82 @@ public class ActAgregarCompra extends AppCompatActivity {
     }
 
     //PROCEDIMIENTO BOTON "AGREGAR A RESUMEN"
-    public void agregarCompraAResumen(View view){
+    public void agregarCompraAResumen(View view) {
 
         Fecha fecha = new Fecha();
 
-        if (autoCCodigoProducto.getText().toString().isEmpty()){
+        //chequeandos if-else de datos ingresados por el usuario
+        if (autoCCodigoProducto.getText().toString().isEmpty()) {
 
-            Toast.makeText(this,"El campo \"CODIGO DE PRODUCTO\" esta incompleto",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"CODIGO DE PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
-        } else if (!listaProductos.contains(new Producto(Integer.parseInt(autoCCodigoProducto.getText().toString())))){
+        } else if (autoCNombreProducto.getText().toString().isEmpty()) {
 
-            Toast.makeText(getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
-
-        } else if (autoCNombreProducto.getText().toString().isEmpty()){
-
-            Toast.makeText(this,"El campo \"NOMBRE DEL PRODUCTO\" esta incompleto",Toast.LENGTH_LONG).show();
-
-        } else if (editCantidad.getText().toString().isEmpty() || (Integer.parseInt(editCantidad.getText().toString()) <= 0)) {
-
-            Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "El campo \"NOMBRE DEL PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
         } else {
 
-            if (editMonto.getText().toString().isEmpty()){
-                editMonto.setText("-1");
+            int pos = listaProductos.indexOf(new Producto(Integer.parseInt(autoCCodigoProducto.getText().toString())));
+            if (pos == -1) {
+
+                Toast.makeText(getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
+
+            } else if (!listaProductos.get(pos).getNombre().equals(autoCNombreProducto.getText().toString())){
+
+                Toast.makeText(getApplicationContext(), "El código y el nombre no coinciden con el producto registrado en la base de datos", Toast.LENGTH_LONG).show();
+
+            } else if (editCantidad.getText().toString().isEmpty() || (Integer.parseInt(editCantidad.getText().toString()) <= 0)) {
+
+                Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
+
+            } else {
+
+                if (editMonto.getText().toString().isEmpty()) {
+                    editMonto.setText("-1");
+                }
+
+                //agregando compra a bdd
+                Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoProducto.getText().toString()), Long.parseLong(fecha.getStringDMAH()), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()));
+                listaCompras.add(nuevaCompra);
+
+                //agregando compra a tabla resumen (en pantalla)
+                if (editMonto.getText().toString().equals("-1")) {
+
+                    String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), "-"};
+                    tablaResumen.addFila(row);
+
+                } else {
+
+                    String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), editMonto.getText().toString()};
+                    tablaResumen.addFila(row);
+
+                }
+
+                //limpiando views
+                autoCCodigoProducto.setText("");
+                autoCNombreProducto.setText("");
+                editCantidad.setText("");
+                editMonto.setText("");
+
+                //habilitando boton registrar venta
+                buttonRegistrarCompra.setEnabled(true);
+
             }
-
-            //agregando compra a bdd
-            Compra nuevaCompra = new Compra(Integer.parseInt(autoCCodigoProducto.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()));
-            listaCompras.add(nuevaCompra);
-            int[] maxEms= {0,3,0};
-
-            //agregando compra a tabla resumen (en pantalla)
-            if (editMonto.getText().toString() == "-1"){
-
-                String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), "-"};
-                tablaResumen.addFilaConMaxEms(row, maxEms);
-
-            }else{
-
-                String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), editMonto.getText().toString()};
-                tablaResumen.addFilaConMaxEms(row, maxEms);
-
-            }
-
-            //limpiando views
-            autoCCodigoProducto.setText("");
-            autoCNombreProducto.setText("");
-            editCantidad.setText("");
-            editMonto.setText("");
-
-            //habilitando boton registrar venta
-            buttonRegistrarCompra.setEnabled(true);
         }
     }
-
     //PROCEDIMIENTO BOTON REGISTRAR COMPRA
     public void registrarCompra(View view){
 
-        operacionesBDD.insertCompra(this.getApplicationContext(), listaCompras);
+        for (int i = 0; i < listaCompras.size(); i++) {
+
+            operacionesBDD.insertCompra(listaCompras.get(i));
+            Producto p = new Producto(listaCompras.get(i).getIdProducto());
+            int pos = listaProductos.indexOf(p);
+            listaProductos.get(pos).sumarACantidad(listaCompras.get(i).getCantidad());
+            recyclerAdapter.notifyItemChanged(pos);
+
+        }
+
         Toast.makeText(this,"La compra se registró correctamente",Toast.LENGTH_LONG).show();
         ActAgregarMovimiento.fa.finish();
         this.finish();

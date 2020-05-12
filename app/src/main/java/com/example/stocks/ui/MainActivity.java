@@ -38,79 +38,9 @@ import static com.example.stocks.sql.AdminBDD.NOMBRE_DB;
 
 /*
 HACER
-      -ver problema de tamaño de fuente dependieno el celular
-      -chequeo de que nombre y codigo correspondan a un mismo producto, en act agregar compra y agregar venta
 
-
-ULTIMOS CAMBIOS
-10-11
--desactive constructor de objeto Linea(idLinea)
-
-11-11
--mejoras en activity agregar linea
--chequeo de duplicado al agregar una linea nueva
-
-12-12
--mejoras en activity agregar producto
--se agregó el chequeo de campos en activity agregar producto
-
-13-12
--comienzo de mejoras en la administración y uso de db
-
-14-12
--se sigue con las mejoras en la administración y uso de db, específicamente el archivo OperacionesBDD
--se integró archivo insertOnDB en OperacionesBDD
--se comentó comando de idMovimiento, en OperacioneBDD, al agregar compra prestamo o venta,(supuestamente no es necesario porque esta definido en la db como autoincrement)
--se debugueo luego de los cambios
--se elimino MyAplication
-
-28-1
--debugueo de activity agregarventa
--se borraron procedimientos sin uso de objeto Tabla: newCellDefault y newCell2
--se hicieron correciones en los xml de activities de agregar compra y agregar venta
--se mejoró la previsualizacion de stock en activity agregar venta
-
-3-3
--se pasò act agregarcompra y agregarventa de relativeLayout a constraintLayout
--debugueo de activity agregarcompra
--debugueo de activity agregarventa
-
-4-3
--se agregó filtro en activity agregar venta y activity agregar compra:
-    -cuando se intenta ingresar un producto q no esta registrado
-    -cantidad ingresada < 0
--se modificó la configuración de algunas de las activitys para evitar que se reinicie al rotar la pantalla
-
-6-3
--se solucionó problema de tablas de resumen en activitys agregar compra y agregar venta
-
-17-4
--se continua creando la activity info de productos (ultios movieminetos)
--se creo metodo .ultimosMovimientos para clase OperacionesBDD que se usa en ActInfoProducto
-+se busca implementar codigo para que al presionar un producto en la lista (recyclerList) muestre ActInfoProducto con los datos correspondientes a ese producto
--se agrego metodo addRow1() en objeto Tabls, que a diferencia de addFila() no usa arreglo de ancho de columnas
-
-21-4
--se quitó boton "limpiar campos" de activities AgregarVenta y AgregarCompra
--se hicieron cambios en el codigo del objeto Tabla referidos al parametro "weight column" para una mejor visualización de los datos en la tabla
-    -por dichos cambios, se adaptó el codigo en las activities AgregarVenta, AgregarCompra y InfoProd para su correcto funcionamiento
--se implemento codigo para mostrar últimos movimiento (ejecutando el activity InfoProd)del producto seleccionado en el recyclerView del MainActivity
-
-22-4
--se agregó codigo en el objeto Tabla para poder personalizar el parametro maxEMS por columna
-
-28-4
-- se creo el fragment para detalles de movimientos y se empezo a trasladar la partes grafica del activityInfoProd a un nuevo fragmentUltimosMovimientos
-
-3-5
--se traslado la interfaz del ActInfoPod al FragmentUltimosMovimientos con éxito
-*se comenzó a implementar codigo para que al seleccionar una fila del la tabla ultimos movimientos muestre el fragmentDetalles
-
-4-5
--se termino de implementar el cambio anterior, solo falta la carga y presentación de datos correspondientes a dicho movimiento en el fragment
-*revisar si los metodos de OperacionesBDD siguen la linea del proposito de este objeto
-
-
+-corregir error de todos los movimientos con misma fecha (la del primero de cada movimiento)
+-corregir impresión de ultimos movimientos en orden por fecha
 
  */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {

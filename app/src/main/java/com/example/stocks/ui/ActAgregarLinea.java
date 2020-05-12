@@ -22,7 +22,7 @@ public class ActAgregarLinea extends AppCompatActivity {
     private int codigoColor;
     private EditText editNombre, editCodigoColor;
     private TextView textMuestraColor;
-    private Button buttonRegistrar, buttonVerdeAgua, buttonRosa, buttonCeleste, buttonTerra, buttonVerdeClaro, buttonMagenta, buttonAzul, buttonNaranja, buttonVerdeOscuro, buttonCerezo, buttonNegro, buttonAmarillo;
+    private Button buttonRegistrar;
     private OperacionesBDD operacionesBDD;
 
     @Override
@@ -36,24 +36,14 @@ public class ActAgregarLinea extends AppCompatActivity {
         //ocultando actionBar
         getSupportActionBar().hide();
 
-        buttonVerdeAgua = (Button) findViewById(R.id.AL_button_verdeAgua);
-        buttonAmarillo = (Button) findViewById(R.id.AL_button_amarillo);
-        buttonAzul = (Button) findViewById(R.id.AL_button_azul);
-        buttonCeleste = (Button) findViewById(R.id.AL_button_celeste);
-        buttonCerezo = (Button) findViewById(R.id.AL_button_cerezo);
-        buttonMagenta = (Button) findViewById(R.id.AL_button_magenta);
-        buttonNaranja = (Button) findViewById(R.id.AL_button_naranja);
-        buttonNegro = (Button) findViewById(R.id.AL_button_negro);
-        buttonRosa = (Button) findViewById(R.id.AL_button_rosa);
-        buttonTerra = (Button) findViewById(R.id.AL_button_terra);
-        buttonVerdeClaro = (Button) findViewById(R.id.AL_button_verdeClaro);
-        buttonVerdeOscuro = (Button) findViewById(R.id.AL_button_verdeOscuro);
-        buttonRegistrar = (Button) findViewById(R.id.AL_button_registrarLinea);
+        //asociando views
+        buttonRegistrar =  findViewById(R.id.AL_button_registrarLinea);
+        textMuestraColor = findViewById(R.id.AL_text_muestraColor);
+        editNombre = findViewById(R.id.AL_edit_nombreLinea);
+        editCodigoColor = findViewById(R.id.AL_edit_colorPersonalizado);
 
+        //inicializando views
         buttonRegistrar.setEnabled(false);
-        textMuestraColor = (TextView) findViewById(R.id.AL_text_muestraColor);
-        editNombre = (EditText) findViewById(R.id.AL_edit_nombreLinea);
-        editCodigoColor = (EditText) findViewById(R.id.AL_edit_colorPersonalizado);
 
     }
 
@@ -83,7 +73,7 @@ public class ActAgregarLinea extends AppCompatActivity {
     public void registrarLinea(View view){
 
 
-        if (editNombre.getText().toString() != "") {
+        if (!editNombre.getText().toString().equals("")) {
 
             //chequeo de nombre duplicado o color en uso
             boolean enUso = false;
@@ -99,7 +89,7 @@ public class ActAgregarLinea extends AppCompatActivity {
             }
 
             if (!enUso) {
-                long id = operacionesBDD.insertLinea(this.getApplicationContext(), editNombre.getText().toString(), codigoColor);
+                long id = operacionesBDD.insertLinea(editNombre.getText().toString(), codigoColor);
                 Toast.makeText(this, "Se registró correctamente la linea", Toast.LENGTH_LONG).show();
 
                 //agregando lina nueva a listaLineas del MAIN

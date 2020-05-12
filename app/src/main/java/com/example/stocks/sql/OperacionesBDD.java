@@ -4,24 +4,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
 import com.example.stocks.model.Data.Compra;
 import com.example.stocks.model.Data.Fecha;
-import com.example.stocks.model.Data.Producto;
-import com.example.stocks.model.Data.Tabla;
+import com.example.stocks.model.Data.Movimiento;
+import com.example.stocks.model.Data.Prestamo;
 import com.example.stocks.model.Data.Venta;
 import com.example.stocks.sql.Contrato.*;
 
 import java.util.ArrayList;
-
-import static com.example.stocks.ui.MainActivity.recyclerAdapter;
-import static com.example.stocks.ui.MainActivity.listaProductos;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Este objeto, se instancia cuando sea necesario llamar a alguno
- * de sus metodos, todos ellos referidos a la escritura y lectura
- * de datos en la base de datos.
+ * de sus metodos referidos a la escritura y lectura
+ * de datos en la BDD
  *
  */
 
@@ -130,79 +128,76 @@ public class OperacionesBDD {
         return cursor;
     }
 
-    public ArrayList<String[]> listaUltimosMovimientos(int idProducto){
-/**
+    public ArrayList<Movimiento> listaUltimosMovimientos(int idProducto){
+/*
  * Devuelve un ArrayList con los ultimos movimientos del producto pasado.
  * El orden de las columnas es CANTIDAD, TIPO DE MOVIMIENTO, FECHA, ID MOVIMIENTO
  * @param int id o código del producto
  */
         SQLiteDatabase db = adminBDD.getReadableDatabase();
-        ArrayList listaUltimosMovimientos = new ArrayList<String[]>();
+        ArrayList listaUltimosMovimientos = new ArrayList<Movimiento>();
 
-        Cursor cursor = db.rawQuery( "SELECT C.cantidad, M.Fecha, C.idMovimiento FROM movimientos M, compras C WHERE C.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
+        Cursor cursor = db.rawQuery( "SELECT C.idMovimiento, M.Fecha, C.cantidad, C.monto, FROM movimientos M, compras C WHERE C.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
             Fecha fecha= new Fecha(cursor.getString(1));
-            String[] row = {cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
-            listaUltimosMovimientos.add(row);
+            //Compra compra = new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3));
+            //String[] row = {cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
+            listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3)));
             while (cursor.moveToNext()) {
-                row = new String[]{cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
-                listaUltimosMovimientos.add(row);
+                fecha= new Fecha(cursor.getString(1));
+                listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3)));
             }
         }
         cursor.close();
-        cursor = db.rawQuery( "SELECT V.cantidad, M.Fecha, V.idMovimiento FROM movimientos M, ventas V WHERE V.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
+        cursor = db.rawQuery( "SELECT V.idMovimiento, M.Fecha, V.cantidad, V.monto, V.cliente FROM movimientos M, ventas V WHERE V.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
+            //Fecha fecha= new Fecha(cursor.getString(1));
+            //String[] row = {cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
+            //listaUltimosMovimientos.add(row);
             Fecha fecha= new Fecha(cursor.getString(1));
-            String[] row = {cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
-            listaUltimosMovimientos.add(row);
+            listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3), cursor.getString(4)));
             while (cursor.moveToNext()) {
-                row = new String[]{cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
-                listaUltimosMovimientos.add(row);
+                fecha= new Fecha(cursor.getString(1));
+                listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3), cursor.getString(4)));
             }
         }
         cursor.close();
-        cursor = db.rawQuery( "SELECT P.cantidad, M.Fecha, P.idMovimiento FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='pedido'AND M.idproducto = " + idProducto, null);
+        cursor = db.rawQuery( "SELECT P.idMovimiento, M.Fecha, P.cantidad, P.tipo, P.socia FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='pedido'AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
-            Fecha fecha= new Fecha(cursor.getString(1));
+            /*Fecha fecha= new Fecha(cursor.getString(1));
             String[] row = {cursor.getString(0), "Prestamo pedido", fecha.getStringDMA(), cursor.getString(2)};
-            listaUltimosMovimientos.add(row);
+            listaUltimosMovimientos.add(row);*/
+            Fecha fecha= new Fecha(cursor.getString(1));
+            listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
             while (cursor.moveToNext()) {
-                row = new String[]{cursor.getString(0), "Prestamo pedido", fecha.getStringDMA(), cursor.getString(2)};
-                listaUltimosMovimientos.add(row);
+                fecha= new Fecha(cursor.getString(1));
+                listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
             }
         }
         cursor.close();
         cursor = db.rawQuery( "SELECT P.cantidad, M.Fecha, P.idMovimiento FROM movimientos M, prestamos P WHERE P.idMovimiento = M.idMovimiento AND P.tipoPrestamo='dado' AND M.idproducto = " + idProducto,null );
         if (cursor.moveToFirst()){
-            Fecha fecha= new Fecha(cursor.getString(1));
+            /*Fecha fecha= new Fecha(cursor.getString(1));
             String[] row = {cursor.getString(0), "Prestamo dado", fecha.getStringDMA(), cursor.getString(2)};
-            listaUltimosMovimientos.add(row);
+            listaUltimosMovimientos.add(row);*/
+            Fecha fecha= new Fecha(cursor.getString(1));
+            listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
             while (cursor.moveToNext()) {
-                row = new String[]{cursor.getString(0), "Prestamo dado", fecha.getStringDMA(), cursor.getString(2)};
-                listaUltimosMovimientos.add(row);
+                fecha= new Fecha(cursor.getString(1));
+                listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getInt(1), cursor.getString(2), cursor.getString(3)));
             }
         }
+/*
+        Collections.sort(listaUltimosMovimientos, new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                return new Fecha(o1[2]).compareTo(new Fecha(o2[2]));
+            }
 
+        });*/
+        Collections.sort(listaUltimosMovimientos);
+        adminBDD.close();
         return listaUltimosMovimientos;
-    }
-
-    public int obtenerIdUltimoMovimiento(Context context){
-        SQLiteDatabase db = adminBDD.getReadableDatabase();
-        int aux = 0;
-        try{
-            String[] campos= {Movimientos.ID_MOVIMIENTO};
-            Cursor cursor = db.rawQuery(Tablas.MOVIMIENTOS, campos);
-            if (cursor.moveToLast()){
-                //(cursor != null && !cursor.isClosed()){
-                //cursor.moveToLast();
-                aux = cursor.getInt(0);
-            }
-        }catch (Exception e) {
-            Toast.makeText(context, "Error al cargar LastMId", Toast.LENGTH_LONG).show();
-        }
-
-        db.close();
-        return aux;
     }
 
     public void dbClose(){
@@ -260,43 +255,33 @@ public class OperacionesBDD {
         db.close();
     }
 
-    public void insertCompra(Context context, ArrayList<Compra> listaCompras){
+    public void insertCompra(Compra compra){
 
         SQLiteDatabase db= adminBDD.getWritableDatabase();
 
         ContentValues dataCompra = new ContentValues();
         ContentValues dataMovimiento = new ContentValues();
 
-        for (int i = 0; i < listaCompras.size(); i++) {
+        //insertando nuevo movimiento en tabla movimientos
+        dataMovimiento.put(Movimientos.ID_PRODUCTO, compra.getIdProducto());
+        dataMovimiento.put(Movimientos.FECHA, compra.getFecha());
+        long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
 
-            //pidiendo el ID movimiento siguiente al ultimo registrado
+        //insertando nueva compra en tabla compras
+        dataCompra.put(Compras.ID_MOVIMIENTO, idMovimiento);
+        dataCompra.put(Compras.CANTIDAD, compra.getCantidad());
+        dataCompra.put(Compras.MONTO, compra.getPrecioUnitario());
+        long succesInsert = db.insert(Tablas.COMPRAS, null, dataCompra);
 
-            //insertando nuevo movimiento en tabla movimientos
-            dataMovimiento.put(Movimientos.ID_PRODUCTO, listaCompras.get(i).getCodigoProducto());
-            dataMovimiento.put(Movimientos.FECHA, listaCompras.get(i).getFecha());
-            long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
 
-            //insertando nueva compra en tabla compras
-            dataCompra.put(Compras.ID_MOVIMIENTO, idMovimiento);
-            dataCompra.put(Compras.CANTIDAD, listaCompras.get(i).getCantidad());
-            dataCompra.put(Compras.MONTO, listaCompras.get(i).getMontoUnitario());
-            db.insert(Tablas.COMPRAS,null,dataCompra);
+        //actualizando cambios en cantidad en el producto dentro de tabla productos
+        String comando = ("UPDATE " + Tablas.PRODUCTOS + " SET " + Productos.CANTIDAD + " = " + Productos.CANTIDAD + " + " + compra.getCantidad() + " WHERE " + Productos.ID_PRODUCTO + " = " + compra.getIdProducto());
+        db.execSQL(comando);
 
-            //actualizando cambios en cantidad en el producto dentro de tabla productos
-            String comando = ("UPDATE "+ Tablas.PRODUCTOS +" SET "+ Productos.CANTIDAD +" = "+ Productos.CANTIDAD +" + "+listaCompras.get(i).getCantidad()+" WHERE "+ Productos.ID_PRODUCTO +" = "+listaCompras.get(i).getCodigoProducto());
-            db.execSQL(comando);
-
-            //actualizando cambios en listaProductos(MainActivity)
-            Producto p = new Producto(listaCompras.get(i).getCodigoProducto());
-            int pos = listaProductos.indexOf(p);
-            listaProductos.get(pos).sumarACantidad(listaCompras.get(i).getCantidad());
-            recyclerAdapter.notifyItemChanged(pos);
-
-        }
         db.close();
     }
 
-    public int insertVenta(Venta venta){
+    public void insertVenta(Venta venta){
 /**
  * Metodo que inserta una venta nueva en la base de datos.
  * @param Venta venta
@@ -310,25 +295,25 @@ public class OperacionesBDD {
         ContentValues dataMovimiento = new ContentValues();
 
         //insertando nuevo movimiento en tabla movimientos
-        dataMovimiento.put(Movimientos.ID_PRODUCTO, venta.getCodigoProducto());
+        dataMovimiento.put(Movimientos.ID_PRODUCTO, venta.getIdProducto());
         dataMovimiento.put(Movimientos.FECHA, venta.getFecha());
         long idMovimiento= db.insert(Tablas.MOVIMIENTOS, null, dataMovimiento);
 
         //insertando nueva venta en tabla ventas
         dataVenta.put(Ventas.ID_MOVIMIENTO, idMovimiento);
-        dataVenta.put(Ventas.ID_CLIENTE, venta).getCliente());
+        dataVenta.put(Ventas.ID_CLIENTE, venta.getCliente());
         dataVenta.put(Ventas.CANTIDAD, venta.getCantidad());
-        dataVenta.put(Ventas.MONTO, venta.getMontoUnitario());
+        dataVenta.put(Ventas.MONTO, venta.getPrecioUnitario());
         db.insert(Tablas.VENTAS,null,dataVenta);
 
         //actualizando cambios en cantidad en el producto dentro de tabla productos
-        String comando = ("UPDATE "+ Tablas.PRODUCTOS +" SET "+ Productos.CANTIDAD +" = "+ Productos.CANTIDAD +" - "+venta.getCantidad()+" WHERE "+ Productos.ID_PRODUCTO +" = "+ venta.getCodigoProducto());
+        String comando = ("UPDATE "+ Tablas.PRODUCTOS +" SET "+ Productos.CANTIDAD +" = "+ Productos.CANTIDAD +" - "+venta.getCantidad()+" WHERE "+ Productos.ID_PRODUCTO +" = "+ venta.getIdProducto());
         db.execSQL(comando);
 
         db.close();
     }
 
-    public long insertLinea(Context context, String nombreLinea, int codigoColor){
+    public long insertLinea(String nombreLinea, int codigoColor){
 
         SQLiteDatabase db = adminBDD.getWritableDatabase();
 

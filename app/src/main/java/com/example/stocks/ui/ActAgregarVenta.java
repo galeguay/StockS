@@ -2,7 +2,6 @@ package com.example.stocks.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stocks.R;
-import com.example.stocks.sql.AdminBDD;
 import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Producto;
 import com.example.stocks.model.Data.Tabla;
@@ -29,17 +27,14 @@ import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 
 public class ActAgregarVenta extends AppCompatActivity {
 
-    private AdminBDD adminBDD;
-    private TableLayout tableLayoutResumen;
     private Tabla tablaResumen;
-    private EditText editCantidad, editMonto, editCliente, editComentario;
+    private EditText editCantidad, editMonto, editCliente;
     private AutoCompleteTextView autoCNombreProducto, autoCCodigoProducto;
     private ArrayList<String> arrayCodigosProductos, arrayNombresProductos;
     private ArrayList<Venta> listaVentas;
     private Button buttonRegistrarVenta;
     private OperacionesBDD operacionesBDD;
     private TextView textCantidadEnStock;
-    private Context context=this;
     private int enStock;
 
 
@@ -47,7 +42,6 @@ public class ActAgregarVenta extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_agregar_venta);
-        final Context context=this;
 
         //ocultando actionBar
         getSupportActionBar().hide();
@@ -56,17 +50,14 @@ public class ActAgregarVenta extends AppCompatActivity {
         operacionesBDD= OperacionesBDD.instanceOf(getApplicationContext());
 
         //inicializando views
-        TextView tituloActivity = (TextView) findViewById(R.id.AV_text_tituloActivity);
-        textCantidadEnStock = (TextView) findViewById(R.id.AV_text_cantidadEnStock);
-        autoCCodigoProducto = (AutoCompleteTextView) findViewById(R.id.AV_autoC_codigoProducto);
-        autoCNombreProducto = (AutoCompleteTextView) findViewById(R.id.AV_autoC_nombreProducto);
-        editCantidad = (EditText) findViewById(R.id.AV_edit_cantidad);
-        editMonto = (EditText) findViewById(R.id.AV_edit_monto);
-        editCliente = (EditText) findViewById(R.id.AV_edit_cliente);
-        tableLayoutResumen = (TableLayout) findViewById(R.id.AV_tableL_resumen);
-        Button bAgregarAResumen = (Button) findViewById(R.id.AV_button_aResumen);
-        Button bLimpiarResumen = (Button) findViewById(R.id.AV_button_limpiarResumen);
-        buttonRegistrarVenta = (Button) findViewById(R.id.AV_button_registrar);
+        textCantidadEnStock = findViewById(R.id.AV_text_cantidadEnStock);
+        autoCCodigoProducto = findViewById(R.id.AV_autoC_codigoProducto);
+        autoCNombreProducto = findViewById(R.id.AV_autoC_nombreProducto);
+        editCantidad = findViewById(R.id.AV_edit_cantidad);
+        editMonto = findViewById(R.id.AV_edit_monto);
+        editCliente = findViewById(R.id.AV_edit_cliente);
+        TableLayout tableLayoutResumen = findViewById(R.id.AV_tableL_resumen);
+        buttonRegistrarVenta = findViewById(R.id.AV_button_registrar);
         buttonRegistrarVenta.setEnabled(false);
 
         //inicializando tabla
@@ -76,9 +67,9 @@ public class ActAgregarVenta extends AppCompatActivity {
 
         //INICIALIZANDO VARIABLES
         textCantidadEnStock.setText("0");
-        listaVentas = new ArrayList<Venta>();
-        arrayCodigosProductos = new ArrayList<String>();
-        arrayNombresProductos = new ArrayList<String>();
+        listaVentas = new ArrayList<>();
+        arrayCodigosProductos = new ArrayList<>();
+        arrayNombresProductos = new ArrayList<>();
         enStock= 0;
     }
 
@@ -90,7 +81,7 @@ public class ActAgregarVenta extends AppCompatActivity {
         getArraysProductos();
 
         //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
         autoCCodigoProducto.setAdapter(adapterCodigos);
 
         //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el codigo correspondiente en el autoCompleteNombre
@@ -101,7 +92,7 @@ public class ActAgregarVenta extends AppCompatActivity {
                 autoCNombreProducto.setText(arrayNombresProductos.get(n));
                 enStock= listaProductos.get(n).getCantidad();
                 for (Venta v: listaVentas){
-                    if (v.getCodigoProducto() == Integer.parseInt(autoCCodigoProducto.getText().toString())){
+                    if (v.getIdProducto() == Integer.parseInt(autoCCodigoProducto.getText().toString())){
                         enStock= enStock - v.getCantidad();
                     }
 
@@ -111,7 +102,7 @@ public class ActAgregarVenta extends AppCompatActivity {
         });
 
         //configurando autoCompleteNombre
-        ArrayAdapter<String> adapterNombres = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
+        ArrayAdapter<String> adapterNombres = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
         autoCNombreProducto.setAdapter(adapterNombres);
 
         //al seleccionar un elemento en el autoCompleteNombre, se complete automaticamente el nombre correspondiente en el autoCompleteCodigo
@@ -123,7 +114,7 @@ public class ActAgregarVenta extends AppCompatActivity {
                 enStock= listaProductos.get(n).getCantidad();
                 //chequea si hay ventas cargadas del mismo producto en el resumen para descontar del numero previsible de stock
                 for (Venta v: listaVentas){
-                    if (v.getCodigoProducto() == Integer.parseInt(autoCCodigoProducto.getText().toString())){
+                    if (v.getIdProducto() == Integer.parseInt(autoCCodigoProducto.getText().toString())){
                         enStock= enStock - v.getCantidad();
                     }
 
@@ -158,53 +149,55 @@ public class ActAgregarVenta extends AppCompatActivity {
 
             Toast.makeText(this, "El campo \"CODIGO DE PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
-        } else if (!listaProductos.contains(new Producto(Integer.parseInt(autoCCodigoProducto.getText().toString())))){
-
-            Toast.makeText(getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
-
         } else if (autoCNombreProducto.getText().toString().isEmpty()) {
 
             Toast.makeText(this, "El campo \"NOMBRE DEL PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
-        } else if (editCantidad.getText().toString().isEmpty() || (Integer.parseInt(editCantidad.getText().toString()) <= 0)) {
-
-            Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
-
-        } else if (editCliente.getText().toString().isEmpty()) {
-
-            Toast.makeText(this, "El campo \"CLIENTE\" esta incompleto", Toast.LENGTH_LONG).show();
-
-        } else if (enStock < Integer.parseInt((editCantidad.getText().toString()))) {
-
-            Toast.makeText(this, "No hay suficiente stock para la venta", Toast.LENGTH_LONG).show();
-
         } else {
-/*
-            if (editMonto.getText().toString().isEmpty()) {
-                editMonto.setText("-1");
-            }*/
 
+            int pos = listaProductos.indexOf(new Producto(Integer.parseInt(autoCCodigoProducto.getText().toString())));
+            if (pos == -1) {
 
-            //agreagando venta a ArrayList listaVentas
-            Venta nuevaVenta = new Venta(Integer.parseInt(autoCCodigoProducto.getText().toString()), fecha.getStringDMAH(), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()), editCliente.getText().toString());
-            listaVentas.add(nuevaVenta);
-            int[] maxEms= {0,3,0};
+                Toast.makeText(getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
 
-            //agregando venta a tabla resumen (en pantalla)
-            String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), editMonto.getText().toString(), editCliente.getText().toString()};
-            tablaResumen.addFilaConMaxEms(row, maxEms);
+            } else if (!listaProductos.get(pos).getNombre().equals(autoCNombreProducto.getText().toString())) {
 
-            //limpiando views
-            autoCCodigoProducto.setText("");
-            autoCNombreProducto.setText("");
-            editCantidad.setText("");
-            editMonto.setText("");
-            editCliente.setText("");
-            enStock = 0;
-            textCantidadEnStock.setText("0");
+                Toast.makeText(getApplicationContext(), "El código y el nombre no coinciden con el producto registrado en la base de datos", Toast.LENGTH_LONG).show();
 
-            //habilitando boton registrar venta
-            buttonRegistrarVenta.setEnabled(true);
+            } else if (editCantidad.getText().toString().isEmpty() || (Integer.parseInt(editCantidad.getText().toString()) <= 0)) {
+
+                Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
+
+            } else if (editCliente.getText().toString().isEmpty()) {
+
+                Toast.makeText(this, "El campo \"CLIENTE\" esta incompleto", Toast.LENGTH_LONG).show();
+
+            } else if (enStock < Integer.parseInt((editCantidad.getText().toString()))) {
+
+                Toast.makeText(this, "No hay suficiente stock para la venta", Toast.LENGTH_LONG).show();
+
+            } else {
+
+                //agreagando venta a ArrayList listaVentas
+                Venta nuevaVenta = new Venta(Integer.parseInt(autoCCodigoProducto.getText().toString()), Long.parseLong(fecha.getStringDMAH()), Integer.parseInt(editCantidad.getText().toString()), Double.valueOf(editMonto.getText().toString()), editCliente.getText().toString());
+                listaVentas.add(nuevaVenta);
+
+                //agregando venta a tabla resumen (en pantalla)
+                String[] row = {editCantidad.getText().toString(), autoCNombreProducto.getText().toString(), editMonto.getText().toString(), editCliente.getText().toString()};
+                tablaResumen.addFila(row);
+
+                //limpiando views
+                autoCCodigoProducto.setText("");
+                autoCNombreProducto.setText("");
+                editCantidad.setText("");
+                editMonto.setText("");
+                editCliente.setText("");
+                enStock = 0;
+                textCantidadEnStock.setText("0");
+
+                //habilitando boton registrar venta
+                buttonRegistrarVenta.setEnabled(true);
+            }
         }
     }
 
@@ -214,14 +207,14 @@ public class ActAgregarVenta extends AppCompatActivity {
         for (int i = 0; i < listaVentas.size(); i++) {
 
             operacionesBDD.insertVenta(listaVentas.get(i));
-            Producto p = new Producto(listaVentas.get(i).getCodigoProducto());
+            Producto p = new Producto(listaVentas.get(i).getIdProducto());
             int pos = listaProductos.indexOf(p);
             listaProductos.get(pos).restarACantidad((listaVentas.get(i).getCantidad()));
             recyclerAdapter.notifyItemChanged(pos);
 
         }
 
-        Toast.makeText(this, "La venta se registró correctamente", Toast.LENGTH_LONG);
+        Toast.makeText(getApplicationContext(), "La venta se registró correctamente", Toast.LENGTH_LONG).show();
         ActAgregarMovimiento.fa.finish();
         this.finish();
 

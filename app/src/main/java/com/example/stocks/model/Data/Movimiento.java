@@ -1,47 +1,51 @@
 package com.example.stocks.model.Data;
 
-public class Movimiento {
+import android.graphics.Movie;
 
-    private int codMovimiento;
-    private int codProducto;
+public abstract class Movimiento implements Comparable<Movimiento>{
+
+    private int idMovimiento;
+    private int idProducto;
     private long fecha;
     private int cantidad;
 
+    public Movimiento(int idMovimiento, int idProducto, long fecha, int cantidad) {
 
-    void Movimiento(int codMovimiento, int cosProducto, long fecha, int cantidad){
-
-        this.codMovimiento = codMovimiento;
-        this.codProducto = codProducto;
-        this.fecha = fecha;
-        this.cantidad = cantidad;
-
-    }
-    //constructor sin pedir codMovimiento (para cuando se lo da de alta en la db)
-    void Movimiento(int codProducto, long fecha, int cantidad){
-
-        this.codProducto = codProducto;
+        this.idMovimiento = idMovimiento;
+        this.idProducto = idProducto;
         this.fecha = fecha;
         this.cantidad = cantidad;
 
     }
 
-    public int getCodMovimiento() {
-        return codMovimiento;
+    public Movimiento(int idProducto, long fecha, int cantidad){
+
+        this.idMovimiento = -1;
+        this.idProducto = idProducto;
+        this.fecha = fecha;
+        this.cantidad = cantidad;
+
     }
 
-    public int getCodProducto() {
-        return codProducto;
+    public int getIdMovimiento() {
+        return idMovimiento;
     }
 
-    public void setCodProducto(int codProducto) {
-        this.codProducto = codProducto;
+    public int getIdProducto() {
+        return idProducto;
     }
 
     public long getFecha() {
         return fecha;
     }
 
-    public void setFecha(long fecha) {
-        this.fecha = fecha;
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    @Override
+    public int compareTo(Movimiento o) {
+        long aux = this.fecha - o.getFecha();
+        return (int) aux;
     }
 }
