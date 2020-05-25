@@ -2,34 +2,34 @@ package com.example.stocks.model.Data;
 
 public class Cliente {
 
-    private int codCliente;
+    private int idCliente;
     private String nombre;
     private String apellido;
     private String cumpleanios;
     private String telefono;
-    private String direccion;
+    private String domicilio;
 
     public Cliente(int codCliente, String nombre, String apellido, String cumpleanios, String telefono, String direccion) {
 
-        this.codCliente = codCliente;
+        this.idCliente = codCliente;
         this.nombre = nombre;
         this.apellido = apellido;
         this.cumpleanios = cumpleanios;
         this.telefono = telefono;
-        this.direccion = direccion;
+        this.domicilio = direccion;
 
     }
-    //constructor sin codCliente (cuando se lo da de alta en la db)
-    public Cliente(String nombre, String apellido, String cumpleanios, String telefono, String direccion) {
+    //constructor sin idCliente (cuando se lo da de alta en la db)
+    public Cliente(String nombre, String apellido, String cumpleanios, String telefono, String domicilio) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.cumpleanios = cumpleanios;
         this.telefono = telefono;
-        this.direccion = direccion;
+        this.domicilio = domicilio;
     }
 
-    public int getCodCliente() {
-        return codCliente;
+    public int getIdCliente() {
+        return idCliente;
     }
 
     public String getNombre() {
@@ -64,11 +64,12 @@ public class Cliente {
         this.telefono = telefono;
     }
 
-    public String getDireccion() {
-        return direccion;
+    public String getDomicilio() {
+        return domicilio;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
     }
+
 }

@@ -12,19 +12,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
-        <activity android:name=".ui.ActAgregarCliente"></activity>
-        <activity android:name=".ui.ActInfoProducto" />
-        <activity android:name=".ui.ActAgregarLinea"
+        <activity android:name=".ui.ActivityAgregarCliente"></activity>
+        <activity android:name=".ui.ActivityInfoProducto" />
+        <activity android:name=".ui.ActivityAgregarLinea"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <activity android:name=".ui.ActAgregarPrestamo" />
-        <activity android:name=".ui.ActAgregarVenta"
+        <activity android:name=".ui.ActivityAgregarPrestamo" />
+        <activity android:name=".ui.ActivityAgregarVenta"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <activity android:name=".ui.ActAgregarProducto"
+        <activity android:name=".ui.ActivityAgregarProducto"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <activity android:name=".ui.ActAgregarCompra"
+        <activity android:name=".ui.ActivityAgregarCompra"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
-            android:name=".ui.ActAgregarMovimiento"
+            android:name=".ui.ActivityAgregarMovimiento"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity android:name=".ui.MainActivity">

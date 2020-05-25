@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import static com.example.stocks.ui.MainActivity.listaProductos;
 
-public class ActAgregarPrestamo extends AppCompatActivity {
+public class ActivityAgregarPrestamo extends AppCompatActivity {
 
     private AdminBDD adminBDD;
     private EditText eCantidad, eSocia;
@@ -119,18 +119,18 @@ public class ActAgregarPrestamo extends AppCompatActivity {
 
             if (radioBPrestamoPedido.isChecked()) {
 
-                operacionesBDD.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"pedido", eSocia.getText().toString(), eCantidad.getText().toString());
+               // operacionesBDD.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"pedido", eSocia.getText().toString(), eCantidad.getText().toString());
                 Toast.makeText(this, "Se registró correctamente el prestamo", Toast.LENGTH_SHORT).show();
 
             } else if (radioBPrastamoDado.isChecked()) {
 
-                operacionesBDD.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"dado", eSocia.getText().toString(), eCantidad.getText().toString());
+                //operacionesBDD.insertPrestamo(this.getApplicationContext(), autoCCodigoProducto.getText().toString(),"dado", eSocia.getText().toString(), eCantidad.getText().toString());
                 Toast.makeText(this, "Se registró correctamente el prestamo", Toast.LENGTH_SHORT).show();
 
             }
         }
 
-        ActAgregarMovimiento.fa.finish();
+        ActivityAgregarMovimiento.fa.finish();
         this.finish();
 
     }

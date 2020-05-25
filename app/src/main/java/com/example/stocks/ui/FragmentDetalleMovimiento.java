@@ -1,7 +1,6 @@
 package com.example.stocks.ui;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,16 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.stocks.R;
 import com.example.stocks.model.Data.Compra;
-import com.example.stocks.model.Data.Fecha;
 import com.example.stocks.model.Data.Movimiento;
 import com.example.stocks.model.Data.Prestamo;
 import com.example.stocks.model.Data.Tabla;
 import com.example.stocks.model.Data.Venta;
-import com.example.stocks.sql.OperacionesBDD;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -153,7 +149,7 @@ public class FragmentDetalleMovimiento extends Fragment {
                     fila = new String[]{"Precio unitario", "$"+ venta.getPrecioUnitario()};
                     tabla.addFila(fila);
 
-                    fila = new String[]{"Cliente", venta.getCliente()};
+                    fila = new String[]{"Cliente", String.valueOf(venta.getIdCliente())};
                     tabla.addFila(fila);
                     break;
 

@@ -17,7 +17,7 @@ import com.example.stocks.R;
 
 import java.util.Calendar;
 
-public class ActAgregarCliente extends AppCompatActivity {
+public class ActivityAgregarCliente extends AppCompatActivity {
 
     private EditText editNacimiento;
     private DatePickerDialog.OnDateSetListener mDateSetListener;

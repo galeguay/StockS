@@ -37,50 +37,51 @@ public class AdminBDD extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + Tablas.PRODUCTOS +"("
-                + Productos.ID_PRODUCTO +" INTEGER PRIMARY KEY, "
-                + Productos.NOMBRE +" TEXT, "
-                + Productos.CANTIDAD +" INTEGER, "
-                + Productos.NOMBRE_LINEA +" TEXT, "
-                + " FOREIGN KEY ("+Productos.NOMBRE_LINEA+") REFERENCES "+Tablas.LINEAS+"("+Movimientos.ID_MOVIMIENTO+"))");
+        db.execSQL("CREATE TABLE " + Tablas.PRODUCTOS + "("
+                + Productos.ID_PRODUCTO + " INTEGER PRIMARY KEY, "
+                + Productos.NOMBRE + " TEXT, "
+                + Productos.CANTIDAD + " INTEGER, "
+                + Productos.NOMBRE_LINEA + " TEXT, "
+                + " FOREIGN KEY (" + Productos.NOMBRE_LINEA + ") REFERENCES " + Tablas.LINEAS + "(" + Movimientos.ID_MOVIMIENTO + "))");
 
-        db.execSQL("CREATE TABLE "+ Tablas.COMPRAS +"("
-                + Compras.ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
-                + Compras.CANTIDAD +" INTEGER, "
-                + Compras.MONTO +" REAL, "
-                + " FOREIGN KEY ("+Compras.ID_MOVIMIENTO+") REFERENCES "+Tablas.MOVIMIENTOS+"("+Movimientos.ID_MOVIMIENTO+"))");
+        db.execSQL("CREATE TABLE " + Tablas.COMPRAS + "("
+                + Compras.ID_MOVIMIENTO + " INTEGER PRIMARY KEY, "
+                + Compras.CANTIDAD + " INTEGER, "
+                + Compras.MONTO + " REAL, "
+                + " FOREIGN KEY (" + Compras.ID_MOVIMIENTO + ") REFERENCES " + Tablas.MOVIMIENTOS + "(" + Movimientos.ID_MOVIMIENTO + "))");
 
-        db.execSQL("CREATE TABLE "+ Tablas.VENTAS +"("
-                + Ventas.ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
-                + Ventas.CANTIDAD +" INTEGER, "
-                + Ventas.MONTO +" REAL, "
-                + Ventas.ID_CLIENTE +" INTEGER, "
-                + " FOREIGN KEY ("+Ventas.ID_MOVIMIENTO+") REFERENCES "+Tablas.MOVIMIENTOS+"("+Movimientos.ID_MOVIMIENTO+"))");
+        db.execSQL("CREATE TABLE " + Tablas.VENTAS + "("
+                + Ventas.ID_MOVIMIENTO + " INTEGER PRIMARY KEY, "
+                + Ventas.CANTIDAD + " INTEGER, "
+                + Ventas.MONTO + " REAL, "
+                + Ventas.ID_CLIENTE + " INTEGER, "
+                + " FOREIGN KEY (" + Ventas.ID_MOVIMIENTO + ") REFERENCES " + Tablas.MOVIMIENTOS + "(" + Movimientos.ID_MOVIMIENTO + "),"
+                + " FOREIGN KEY (" + Ventas.ID_CLIENTE + ") REFERENCES " + Tablas.CLIENTES + "(" + Clientes.ID_CLIENTE + "))");
 
-        db.execSQL("CREATE TABLE "+ Tablas.PRESTAMOS +"("
-                + Prestamos.ID_MOVIMIENTO +" INTEGER PRIMARY KEY, "
-                + Prestamos.TIPO_PRESTAMO +" TEXT, "
-                + Prestamos.SOCIA +" TEXT, "
-                + Prestamos.CANTIDAD +" INTEGER, "
-                + " FOREIGN KEY ("+Prestamos.ID_MOVIMIENTO+") REFERENCES "+Tablas.MOVIMIENTOS+"("+Movimientos.ID_MOVIMIENTO+"))");
+        db.execSQL("CREATE TABLE " + Tablas.PRESTAMOS + "("
+                + Prestamos.ID_MOVIMIENTO + " INTEGER PRIMARY KEY, "
+                + Prestamos.CANTIDAD + " INTEGER, "
+                + Prestamos.TIPO_PRESTAMO + " TEXT, "
+                + Prestamos.SOCIA + " TEXT, "
+                + " FOREIGN KEY (" + Prestamos.ID_MOVIMIENTO + ") REFERENCES " + Tablas.MOVIMIENTOS + "(" + Movimientos.ID_MOVIMIENTO + "))");
 
-        db.execSQL("CREATE TABLE " + Tablas.LINEAS +"("
-                + Lineas.ID_LINEA+" INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Lineas.NOMBRE +" TEXT, "
-                + Lineas.COLOR +" INTEGER)");
+        db.execSQL("CREATE TABLE " + Tablas.LINEAS + "("
+                + Lineas.ID_LINEA + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + Lineas.NOMBRE + " TEXT, "
+                + Lineas.COLOR + " INTEGER)");
 
-        db.execSQL("CREATE TABLE " + Tablas.MOVIMIENTOS +"("
-                + Movimientos.ID_MOVIMIENTO +" INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Movimientos.ID_PRODUCTO +" INTEGER, "
-                + Movimientos.FECHA +" TEXT)");
+        db.execSQL("CREATE TABLE " + Tablas.MOVIMIENTOS + "("
+                + Movimientos.ID_MOVIMIENTO + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + Movimientos.ID_PRODUCTO + " INTEGER, "
+                + Movimientos.FECHA + " TEXT)");
 
-        db.execSQL("CREATE TABLE " + Tablas.CLIENTES +"("
-                + Clientes.ID_CLIENTE +" INTEGER PRIMARY KEY, "
-                + Clientes.NOMBRE +" TEXT, "
-                + Clientes.APELLIDO +" TEXT, "
-                + Clientes.NACIMIENTO +" TEXT, "
-                + Clientes.TELEFONO +" TEXT, "
-                + Clientes.DOMICILIO +" TEXT)");
+        db.execSQL("CREATE TABLE " + Tablas.CLIENTES + "("
+                + Clientes.ID_CLIENTE + " INTEGER PRIMARY KEY, "
+                + Clientes.NOMBRE + " TEXT, "
+                + Clientes.APELLIDO + " TEXT, "
+                + Clientes.NACIMIENTO + " TEXT, "
+                + Clientes.TELEFONO + " TEXT, "
+                + Clientes.DOMICILIO + " TEXT)");
     }
 
     @Override

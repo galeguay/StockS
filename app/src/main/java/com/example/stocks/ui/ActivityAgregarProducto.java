@@ -21,7 +21,7 @@ import static com.example.stocks.ui.MainActivity.listaLineas;
 import static com.example.stocks.ui.MainActivity.listaProductos;
 import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 
-public class ActAgregarProducto extends AppCompatActivity {
+public class ActivityAgregarProducto extends AppCompatActivity {
 
     private EditText editCodigo, editNombre, editCantidad;
     private Spinner spinnerLinea;
@@ -82,7 +82,7 @@ public class ActAgregarProducto extends AppCompatActivity {
     //PROCEDIMIENTO BOTON "AGREGAR LINEA"
     public void agregarLinea(View view) {
 
-        Intent intentAgregarLinea = new Intent(this, ActAgregarLinea.class);
+        Intent intentAgregarLinea = new Intent(this, ActivityAgregarLinea.class);
         startActivity(intentAgregarLinea);
 
     }
@@ -114,7 +114,7 @@ public class ActAgregarProducto extends AppCompatActivity {
                         recyclerAdapter.notifyItemInserted(listaProductos.size() - 1);
 
                         //insertando producto en bdd
-                        operacionesBDD.insertProducto(getApplicationContext(), editCodigo.getText().toString(), editNombre.getText().toString(), editCantidad.getText().toString(), spinnerLinea.getSelectedItem().toString());
+                        operacionesBDD.insertProducto(editCodigo.getText().toString(), editNombre.getText().toString(), editCantidad.getText().toString(), spinnerLinea.getSelectedItem().toString());
                         Toast.makeText(getApplicationContext(), "El producto se agregó correctamente", Toast.LENGTH_LONG).show();
                         finish();
 

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/FAP_scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".ui.FragmentAgregarPrestamo" >
+
+        <TextView
+            android:id="@+id/FAP_tv_titulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="AGREGAR PRESTAMO"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <AutoCompleteTextView
+            android:id="@+id/FAP_autoC_nombreProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Nombre de producto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/FAP_tv_titulo" />
+
+        <AutoCompleteTextView
+            android:id="@+id/FAP_autoC_codigoProducto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Código de producto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/FAP_autoC_nombreProducto" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="PRESTAMO PEDIDO: Una socia me prestó a mi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/FAP_et_cantidad" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="PRESTAMO DADO: Yo le presté a una socia"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="¿Qué tipo de prestamo es?"
+            android:textSize="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+        <RadioGroup
+            android:id="@+id/FAP_radioG_tipoPrestamo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView8">
+
+            <RadioButton
+                android:id="@+id/FAP_radioB_pPedido"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Prestamo pedido" />
+
+            <RadioButton
+                android:id="@+id/FAP_radioB_pDado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Prestamo dado" />
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/FAP_et_cantidad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:hint="Cantidad"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/FAP_autoC_codigoProducto" />
+
+        <EditText
+            android:id="@+id/FAP_eT_socia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Nombre de socia"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/FAP_radioG_tipoPrestamo" />
+
+        <Button
+            android:id="@+id/FAP_b_registrarPrestamo"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="REGISTRAR \nPRESTAMO"
+            app:layout_constraintTop_toBottomOf="@+id/FAP_eT_socia"
+            tools:layout_editor_absoluteX="138dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

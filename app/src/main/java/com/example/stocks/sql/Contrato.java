@@ -58,6 +58,7 @@ public class Contrato {
         String VENTAS= "ventas";
         String PRESTAMOS= "prestamos";
         String LINEAS= "lineas";
+        String SOCIAS= "socias";
     }
 
     public static class Productos implements CamposProductos{}

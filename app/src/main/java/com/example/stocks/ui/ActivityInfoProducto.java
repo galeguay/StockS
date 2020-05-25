@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import static com.example.stocks.ui.MainActivity.listaProductos;
 
-public class ActInfoProducto extends AppCompatActivity implements FragmentUltimosMovimientos.OnFragmentInteractionListener, FragmentDetalleMovimiento.OnFragmentInteractionListener{
+public class ActivityInfoProducto extends AppCompatActivity implements FragmentUltimosMovimientos.OnFragmentInteractionListener, FragmentDetalleMovimiento.OnFragmentInteractionListener{
 
     private AdminBDD baseDeDatos;
     private Bundle extras;

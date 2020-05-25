@@ -1,20 +1,27 @@
 package com.example.stocks.ui;
 
+import android.content.Context;
 import android.content.Intent;
-
-import androidx.appcompat.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.TableLayout;
 import android.widget.EditText;
+import android.widget.TableLayout;
 import android.widget.Toast;
+
 import com.example.stocks.R;
-import com.example.stocks.model.Data.*;
+import com.example.stocks.model.Data.Compra;
 import com.example.stocks.model.Data.Fecha;
+import com.example.stocks.model.Data.Producto;
 import com.example.stocks.model.Data.Tabla;
 import com.example.stocks.sql.OperacionesBDD;
 
@@ -23,8 +30,27 @@ import java.util.ArrayList;
 import static com.example.stocks.ui.MainActivity.listaProductos;
 import static com.example.stocks.ui.MainActivity.recyclerAdapter;
 
-public class ActAgregarCompra extends AppCompatActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link FragmentAgregarCompra.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link FragmentAgregarCompra#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class FragmentAgregarCompra extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
 
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+    private OnFragmentInteractionListener mListener;
+
+    private View vista;
     private Tabla tablaResumen;
     private EditText editCantidad, editMonto;
     private AutoCompleteTextView autoCNombreProducto, autoCCodigoProducto;
@@ -33,46 +59,109 @@ public class ActAgregarCompra extends AppCompatActivity {
     private Button buttonRegistrarCompra;
     private OperacionesBDD operacionesBDD;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_act_agregar_compra);
+    public FragmentAgregarCompra() {
+        // Required empty public constructor
+    }
 
-        //ocultando actionBar
-        getSupportActionBar().hide();
+
+    // TODO: Rename and change types and number of parameters
+    public static FragmentAgregarCompra newInstance() {
+        FragmentAgregarCompra fragment = new FragmentAgregarCompra();
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
 
         //inicializando admin de base de datos
-        operacionesBDD= OperacionesBDD.instanceOf(getApplicationContext());
-
-        //CARGANDO VIEWS
-        TableLayout tableLayoutAAC1 = findViewById(R.id.AC_tableL_resumen);
-        autoCNombreProducto = findViewById(R.id.AC_autoC_nombreProducto);
-        autoCCodigoProducto = findViewById(R.id.AC_autoC_codigoProducto);
-        editCantidad = findViewById(R.id.AC_edit_cantidad);
-        editMonto = findViewById(R.id.AC_edit_monto);
-        buttonRegistrarCompra = findViewById(R.id.AC_button_registrar);
-        buttonRegistrarCompra.setEnabled(false);
-
-        //inicializando tabla
-        String[] header = new String[]{"#", "Producto", "$ por unidad"};
-        float[] weightCol= new float[]{1.5f,6f,2.5f};
-        tablaResumen = new Tabla(this, tableLayoutAAC1, weightCol, header);
+        operacionesBDD = OperacionesBDD.instanceOf(getActivity().getApplicationContext());
 
         //INICIALIZANDO VARIABLES
         listaCompras = new ArrayList<>();
         arrayCodigosProductos = new ArrayList<>();
         arrayNombresProductos = new ArrayList<>();
-
     }
 
     @Override
-    protected void onResume() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        vista = inflater.inflate(R.layout.fragment_agregar_compra, container, false);
+
+        //CARGANDO VIEWS
+        TableLayout tableLayoutAAC1 = vista.findViewById(R.id.FAC_tableL_resumen);
+        autoCNombreProducto = vista.findViewById(R.id.FAC_autoC_nombreProducto);
+        autoCCodigoProducto = vista.findViewById(R.id.FAC_autoC_codigoProducto);
+        editCantidad = vista.findViewById(R.id.FAC_edit_cantidad);
+        editMonto = vista.findViewById(R.id.FAC_edit_monto);
+        buttonRegistrarCompra = vista.findViewById(R.id.FAC_button_registrar);
+        buttonRegistrarCompra.setEnabled(false);
+
+        //inicializando tabla
+        String[] header = new String[]{"#", "Producto", "$ por unidad"};
+        float[] weightCol = new float[]{1.5f, 6f, 2.5f};
+        tablaResumen = new Tabla(getActivity().getApplicationContext(), tableLayoutAAC1, weightCol, header);
+
+        return vista;
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
         getArraysProductos();
 
+
+    }
+
+    private void cargarAutoCViewData(){
+
         //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
         //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
         autoCCodigoProducto.setAdapter(adapterCodigos);
 
         //al seleccionar un elemento en el autoCompleteNombre, se carga automaticamente el codigo correspondiente en el autoCompleteCodigo
@@ -85,7 +174,7 @@ public class ActAgregarCompra extends AppCompatActivity {
         });
 
         //configurando autoCompleteNombre
-        ArrayAdapter<String> adapterNombres = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
+        ArrayAdapter<String> adapterNombres = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, arrayNombresProductos);
         autoCNombreProducto.setAdapter(adapterNombres);
 
         //al seleccionar un elemento en el autoCompleteNombre, se complete automaticamente el nombre correspondiente en el autoCompleteCodigo
@@ -100,7 +189,7 @@ public class ActAgregarCompra extends AppCompatActivity {
     }
 
     //PROCEDIMIENTO inicializa y carga los arreglos con nombres y codigos de los productos en la BDD
-    public void getArraysProductos(){
+    private void getArraysProductos(){
 
         arrayCodigosProductos = new ArrayList<>();
         arrayNombresProductos = new ArrayList<>();
@@ -119,26 +208,26 @@ public class ActAgregarCompra extends AppCompatActivity {
         //chequeandos if-else de datos ingresados por el usuario
         if (autoCCodigoProducto.getText().toString().isEmpty()) {
 
-            Toast.makeText(this, "El campo \"CODIGO DE PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), "El campo \"CODIGO DE PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
         } else if (autoCNombreProducto.getText().toString().isEmpty()) {
 
-            Toast.makeText(this, "El campo \"NOMBRE DEL PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), "El campo \"NOMBRE DEL PRODUCTO\" esta incompleto", Toast.LENGTH_LONG).show();
 
         } else {
 
             int pos = listaProductos.indexOf(new Producto(Integer.parseInt(autoCCodigoProducto.getText().toString())));
             if (pos == -1) {
 
-                Toast.makeText(getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "No hay ningún producto registrado con ese código", Toast.LENGTH_LONG).show();
 
             } else if (!listaProductos.get(pos).getNombre().equals(autoCNombreProducto.getText().toString())){
 
-                Toast.makeText(getApplicationContext(), "El código y el nombre no coinciden con el producto registrado en la base de datos", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "El código y el nombre no coinciden con el producto registrado en la base de datos", Toast.LENGTH_LONG).show();
 
             } else if (editCantidad.getText().toString().isEmpty() || (Integer.parseInt(editCantidad.getText().toString()) <= 0)) {
 
-                Toast.makeText(this, "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), "El campo \"CANTIDAD\" esta incompleto o es menor que 1", Toast.LENGTH_LONG).show();
 
             } else {
 
@@ -175,6 +264,7 @@ public class ActAgregarCompra extends AppCompatActivity {
             }
         }
     }
+
     //PROCEDIMIENTO BOTON REGISTRAR COMPRA
     public void registrarCompra(View view){
 
@@ -188,9 +278,8 @@ public class ActAgregarCompra extends AppCompatActivity {
 
         }
 
-        Toast.makeText(this,"La compra se registró correctamente",Toast.LENGTH_LONG).show();
-        ActAgregarMovimiento.fa.finish();
-        this.finish();
+        Toast.makeText(getActivity().getApplicationContext(),"La compra se registró correctamente",Toast.LENGTH_LONG).show();
+        ActivityAgregarMovimiento.fa.finish();
 
     }
 
@@ -201,13 +290,13 @@ public class ActAgregarCompra extends AppCompatActivity {
         autoCNombreProducto.setText("");
         editCantidad.setText("");
         editMonto.setText("");
-        Toast.makeText(this,"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(),"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
     }
 
     //PROCEDIMIENTO BOTON DE AGREGAR PRODUCTO (+)
     public void agregarProducto(View view){
 
-        Intent intentAgregarProducto= new Intent(this, ActAgregarProducto.class);
+        Intent intentAgregarProducto= new Intent(getActivity().getApplicationContext(), ActivityAgregarProducto.class);
         startActivity(intentAgregarProducto);
     }
 
@@ -217,6 +306,6 @@ public class ActAgregarCompra extends AppCompatActivity {
         listaCompras.clear();
         tablaResumen.removeAllViews();
         buttonRegistrarCompra.setEnabled(false);
-        Toast.makeText(this,"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(),"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
     }
 }

@@ -151,8 +151,6 @@ public class FragmentUltimosMovimientos extends Fragment {
                 tabla.getRow(i+1).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.AIP_fl_contenedorFragments, FragmentDetalleMovimiento.newInstance(argumentos)).addToBackStack(null).commit();
                     }
                 });

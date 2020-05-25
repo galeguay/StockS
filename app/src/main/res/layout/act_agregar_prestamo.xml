@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    tools:context=".ui.ActAgregarPrestamo">
+    tools:context=".ui.ActivityAgregarPrestamo">
 
     <TextView
         android:id="@+id/AP_text_titulo"

@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recyclerAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentInfoProducto = new Intent(getApplicationContext(), ActInfoProducto.class);
+                Intent intentInfoProducto = new Intent(getApplicationContext(), ActivityInfoProducto.class);
                 intentInfoProducto.putExtra("codigoProducto", listaProductos.get(recyclerProductos.getChildAdapterPosition(v)).getCodigo());
                 intentInfoProducto.putExtra("nombreProducto", listaProductos.get(recyclerProductos.getChildAdapterPosition(v)).getNombre());
                 startActivity(intentInfoProducto);
@@ -144,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     //FUNCION DEL BOTON AGREGAR MOVIMIENTO DEL MENU FLOTANTE
     public void agregarMovimiento(View view){
-        Intent intentAgregarMovimiento= new Intent(this, ActAgregarMovimiento.class);
+        Intent intentAgregarMovimiento= new Intent(this, ActivityAgregarMovimiento.class);
         startActivity(intentAgregarMovimiento);
     }
 
     //FUNCION DEL BOTON AGREGAR PRODUCTO
     public void agregarProducto(View view){
-        Intent intentAgregarProducto= new Intent(this, ActAgregarProducto.class);
+        Intent intentAgregarProducto= new Intent(this, ActivityAgregarProducto.class);
         startActivity(intentAgregarProducto);
     }
 

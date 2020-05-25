@@ -17,7 +17,7 @@ import com.example.stocks.sql.OperacionesBDD;
 
 import static com.example.stocks.ui.MainActivity.listaLineas;
 
-public class ActAgregarLinea extends AppCompatActivity {
+public class ActivityAgregarLinea extends AppCompatActivity {
 
     private int codigoColor;
     private EditText editNombre, editCodigoColor;

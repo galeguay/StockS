@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
 import com.example.stocks.model.Data.Compra;
 import com.example.stocks.model.Data.Fecha;
@@ -48,7 +47,7 @@ public class OperacionesBDD {
 
         return db.rawQuery(sql, null);
     }
-
+/*
     public Cursor cursorTablaMovimientos() {
         SQLiteDatabase db = adminBDD.getReadableDatabase();
 
@@ -93,7 +92,7 @@ public class OperacionesBDD {
 
         return db.rawQuery(sql, null);
     }
-
+*/
     public Cursor cursorLineas() {
         SQLiteDatabase db = adminBDD.getReadableDatabase();
 
@@ -102,7 +101,7 @@ public class OperacionesBDD {
 
         return db.rawQuery(sql, null);
     }
-
+/*
     public Cursor cursorDetallesMovimiento(int idMovimiento, String tipoMovimiento) {
 
         SQLiteDatabase db = adminBDD.getReadableDatabase();
@@ -128,7 +127,7 @@ public class OperacionesBDD {
         }
         return cursor;
     }
-
+*/
     public ArrayList<Movimiento> listaUltimosMovimientos(int idProducto){
 /*
  * Devuelve un ArrayList con los ultimos movimientos del producto pasado.
@@ -140,12 +139,12 @@ public class OperacionesBDD {
 
         Cursor cursor = db.rawQuery( "SELECT C.idMovimiento, M.fecha, C.cantidad, C.monto FROM movimientos M, compras C WHERE C.idMovimiento = M.idMovimiento AND M.idproducto = " + idProducto, null);
         if (cursor.moveToFirst()){
-            Fecha fecha= new Fecha(cursor.getString(1));
+            //Fecha fecha= new Fecha(cursor.getString(1));
             //Compra compra = new Compra(cursor.getInt(0), idProducto, cursor.getLong(1), cursor.getInt(2), cursor.getDouble(3));
             //String[] row = {cursor.getString(0), "Compra", fecha.getStringDMA(), cursor.getString(2)};
             listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3)));
             while (cursor.moveToNext()) {
-                fecha= new Fecha(cursor.getString(1));
+                //fecha= new Fecha(cursor.getString(1));
                 listaUltimosMovimientos.add(new Compra(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3)));
             }
         }
@@ -155,11 +154,11 @@ public class OperacionesBDD {
             //Fecha fecha= new Fecha(cursor.getString(1));
             //String[] row = {cursor.getString(0), "Venta", fecha.getStringDMA(), cursor.getString(2)};
             //listaUltimosMovimientos.add(row);
-            Fecha fecha= new Fecha(cursor.getString(1));
-            listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3), cursor.getString(4)));
+            //Fecha fecha= new Fecha(cursor.getString(1));
+            listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3), cursor.getInt(4)));
             while (cursor.moveToNext()) {
-                fecha= new Fecha(cursor.getString(1));
-                listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3), cursor.getString(4)));
+              //  fecha= new Fecha(cursor.getString(1));
+                listaUltimosMovimientos.add(new Venta(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getFloat(3), cursor.getInt(4)));
             }
         }
         cursor.close();
@@ -168,10 +167,10 @@ public class OperacionesBDD {
             /*Fecha fecha= new Fecha(cursor.getString(1));
             String[] row = {cursor.getString(0), "Prestamo pedido", fecha.getStringDMA(), cursor.getString(2)};
             listaUltimosMovimientos.add(row);*/
-            Fecha fecha= new Fecha(cursor.getString(1));
+            //Fecha fecha= new Fecha(cursor.getString(1));
             listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             while (cursor.moveToNext()) {
-                fecha= new Fecha(cursor.getString(1));
+                //fecha= new Fecha(cursor.getString(1));
                 listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             }
         }
@@ -181,14 +180,15 @@ public class OperacionesBDD {
             /*Fecha fecha= new Fecha(cursor.getString(1));
             String[] row = {cursor.getString(0), "Prestamo dado", fecha.getStringDMA(), cursor.getString(2)};
             listaUltimosMovimientos.add(row);*/
-            Fecha fecha= new Fecha(cursor.getString(1));
+            //Fecha fecha= new Fecha(cursor.getString(1));
             listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             while (cursor.moveToNext()) {
-                fecha= new Fecha(cursor.getString(1));
+                //fecha= new Fecha(cursor.getString(1));
                 listaUltimosMovimientos.add(new Prestamo(cursor.getInt(0), idProducto, cursor.getString(1), cursor.getInt(2), cursor.getString(3), cursor.getString(4)));
             }
         }
-/*
+        adminBDD.close();
+        /*
         Collections.sort(listaUltimosMovimientos, new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {
@@ -198,15 +198,14 @@ public class OperacionesBDD {
         });*/
         Comparator<Movimiento> comparador = Collections.reverseOrder();
         Collections.sort(listaUltimosMovimientos, comparador);
-        adminBDD.close();
         return listaUltimosMovimientos;
     }
-
+/*
     public void dbClose(){
         adminBDD.close();
     }
-
-    public void insertProducto(Context context, String codigo, String nombre, String cantidad, String linea){
+*/
+    public void insertProducto(String codigo, String nombre, String cantidad, String linea){
 
         SQLiteDatabase db = adminBDD.getWritableDatabase();
 
@@ -223,7 +222,7 @@ public class OperacionesBDD {
 
     }
 
-    public void insertPrestamo(Context context, String idProducto, String tipoPrestamo, String socia, String cantidad){
+    public void insertPrestamo(String idProducto, String tipoPrestamo, String socia, String cantidad){
 
         SQLiteDatabase db= adminBDD.getWritableDatabase();
         Fecha fecha= new Fecha();
@@ -273,7 +272,7 @@ public class OperacionesBDD {
         dataCompra.put(Compras.ID_MOVIMIENTO, idMovimiento);
         dataCompra.put(Compras.CANTIDAD, compra.getCantidad());
         dataCompra.put(Compras.MONTO, compra.getPrecioUnitario());
-        long succesInsert = db.insert(Tablas.COMPRAS, null, dataCompra);
+        //long succesInsert = db.insert(Tablas.COMPRAS, null, dataCompra);
 
 
         //actualizando cambios en cantidad en el producto dentro de tabla productos
@@ -303,7 +302,7 @@ public class OperacionesBDD {
 
         //insertando nueva venta en tabla ventas
         dataVenta.put(Ventas.ID_MOVIMIENTO, idMovimiento);
-        dataVenta.put(Ventas.ID_CLIENTE, venta.getCliente());
+        dataVenta.put(Ventas.ID_CLIENTE, venta.getIdCliente());
         dataVenta.put(Ventas.CANTIDAD, venta.getCantidad());
         dataVenta.put(Ventas.MONTO, venta.getPrecioUnitario());
         db.insert(Tablas.VENTAS,null,dataVenta);
