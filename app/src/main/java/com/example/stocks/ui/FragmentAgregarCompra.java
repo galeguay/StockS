@@ -56,7 +56,7 @@ public class FragmentAgregarCompra extends Fragment {
     private AutoCompleteTextView autoCNombreProducto, autoCCodigoProducto;
     private ArrayList<String> arrayCodigosProductos, arrayNombresProductos;
     private ArrayList<Compra> listaCompras;
-    private Button buttonRegistrarCompra;
+    private Button buttonRegistrarCompra, buttonAgrergarProducto, buttonAgregarAResumen, buttonLimpiarResumen;
     private OperacionesBDD operacionesBDD;
 
     public FragmentAgregarCompra() {
@@ -88,8 +88,8 @@ public class FragmentAgregarCompra extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         vista = inflater.inflate(R.layout.fragment_agregar_compra, container, false);
 
@@ -101,12 +101,42 @@ public class FragmentAgregarCompra extends Fragment {
         editMonto = vista.findViewById(R.id.FAC_edit_monto);
         buttonRegistrarCompra = vista.findViewById(R.id.FAC_button_registrar);
         buttonRegistrarCompra.setEnabled(false);
+        buttonAgregarAResumen = vista.findViewById(R.id.FAC_button_aResumen);
+        buttonAgrergarProducto = vista.findViewById(R.id.FAC_button_agregarProducto);
+        buttonLimpiarResumen = vista.findViewById(R.id.FAC_button_limpiarResumen);
+
+
+        //asignando funciones a botones en pantalla
+        buttonAgrergarProducto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAgregarProducto(v);
+            }
+        });
+        buttonAgregarAResumen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAgregarAResumen(v);
+            }
+        });
+        buttonRegistrarCompra.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickRegistrarCompra(v);
+            }
+        });
+        buttonLimpiarResumen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLimpiarResumen(v);
+            }
+        });
+
 
         //inicializando tabla
         String[] header = new String[]{"#", "Producto", "$ por unidad"};
         float[] weightCol = new float[]{1.5f, 6f, 2.5f};
         tablaResumen = new Tabla(getActivity().getApplicationContext(), tableLayoutAAC1, weightCol, header);
-
         return vista;
     }
 
@@ -151,17 +181,25 @@ public class FragmentAgregarCompra extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
-        getArraysProductos();
 
+        super.onResume();
+        cargarAutoCompletesViews();
 
     }
 
-    private void cargarAutoCViewData(){
+    private void cargarAutoCompletesViews(){
+
+        //OBTENIENDO ARRAYS DE LIASTA DE PRODUCTO
+        arrayCodigosProductos = new ArrayList<>();
+        arrayNombresProductos = new ArrayList<>();
+
+        for (Producto producto : listaProductos ){
+            arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
+            arrayNombresProductos.add(producto.getNombre());
+        }
 
         //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
-        //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
         autoCCodigoProducto.setAdapter(adapterCodigos);
 
         //al seleccionar un elemento en el autoCompleteNombre, se carga automaticamente el codigo correspondiente en el autoCompleteCodigo
@@ -188,20 +226,7 @@ public class FragmentAgregarCompra extends Fragment {
 
     }
 
-    //PROCEDIMIENTO inicializa y carga los arreglos con nombres y codigos de los productos en la BDD
-    private void getArraysProductos(){
-
-        arrayCodigosProductos = new ArrayList<>();
-        arrayNombresProductos = new ArrayList<>();
-
-        for (Producto producto : listaProductos ){
-            arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
-            arrayNombresProductos.add(producto.getNombre());
-        }
-    }
-
-    //PROCEDIMIENTO BOTON "AGREGAR A RESUMEN"
-    public void agregarCompraAResumen(View view) {
+    public void onClickAgregarAResumen(View view) {
 
         Fecha fecha = new Fecha();
 
@@ -266,7 +291,7 @@ public class FragmentAgregarCompra extends Fragment {
     }
 
     //PROCEDIMIENTO BOTON REGISTRAR COMPRA
-    public void registrarCompra(View view){
+    public void onClickRegistrarCompra(View view){
 
         for (int i = 0; i < listaCompras.size(); i++) {
 
@@ -283,29 +308,21 @@ public class FragmentAgregarCompra extends Fragment {
 
     }
 
-    //PROCEDIMIENTO BOTON LIMPIAR CAMPOS
-    public void limpiarCampos(View view){
-
-        autoCCodigoProducto.setText("");
-        autoCNombreProducto.setText("");
-        editCantidad.setText("");
-        editMonto.setText("");
-        Toast.makeText(getActivity().getApplicationContext(),"Se limpiaron todos los campos",Toast.LENGTH_SHORT).show();
-    }
-
     //PROCEDIMIENTO BOTON DE AGREGAR PRODUCTO (+)
-    public void agregarProducto(View view){
+    public void onClickAgregarProducto(View view){
 
-        Intent intentAgregarProducto= new Intent(getActivity().getApplicationContext(), ActivityAgregarProducto.class);
+        Intent intentAgregarProducto= new Intent(getActivity(), ActivityAgregarProducto.class);
         startActivity(intentAgregarProducto);
+
     }
 
     //PROCEDIMIENTO BOTON LIMPIAR RESUMEN
-    public void limpiarResumen(View view){
+    public void onClickLimpiarResumen(View view){
 
         listaCompras.clear();
         tablaResumen.removeAllViews();
         buttonRegistrarCompra.setEnabled(false);
         Toast.makeText(getActivity().getApplicationContext(),"Se limpió la tabla resumen",Toast.LENGTH_SHORT).show();
     }
+
 }

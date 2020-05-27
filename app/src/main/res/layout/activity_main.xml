@@ -34,7 +34,7 @@
             android:id="@+id/fabAgregarProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="agregarProducto"
+            android:onClick="agregarProductoAAM"
             app:fab_colorNormal="#E63F3F"
             app:fab_colorPressed="#E69393"
             app:fab_icon="@drawable/ic_fab_productos_24dp"

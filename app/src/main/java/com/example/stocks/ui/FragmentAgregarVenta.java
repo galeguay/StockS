@@ -39,14 +39,6 @@ import static com.example.stocks.ui.MainActivity.recyclerAdapter;
  * create an instance of this fragment.
  */
 public class FragmentAgregarVenta extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,7 +48,7 @@ public class FragmentAgregarVenta extends Fragment {
     private AutoCompleteTextView autoCNombreProducto, autoCCodigoProducto;
     private ArrayList<String> arrayCodigosProductos, arrayNombresProductos;
     private ArrayList<Venta> listaVentas;
-    private Button buttonRegistrarVenta;
+    private Button buttonRegistrarVenta, buttonAgregarAResumen, buttonLimpiarResumen;
     private OperacionesBDD operacionesBDD;
     private TextView textCantidadEnStock;
     private int enStock;
@@ -65,14 +57,6 @@ public class FragmentAgregarVenta extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentAgregarVenta.
-     */
     // TODO: Rename and change types and number of parameters
     public static FragmentAgregarVenta newInstance() {
         FragmentAgregarVenta fragment = new FragmentAgregarVenta();
@@ -81,12 +65,6 @@ public class FragmentAgregarVenta extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_act_agregar_venta);
 
@@ -106,6 +84,7 @@ public class FragmentAgregarVenta extends Fragment {
         // Inflate the layout for this fragment
         vista = inflater.inflate(R.layout.fragment_agregar_venta, container, false);
 
+
         //inicializando views
         textCantidadEnStock = vista.findViewById(R.id.FAV_text_cantidadEnStock);
         autoCCodigoProducto = vista.findViewById(R.id.FAV_autoC_codigoProducto);
@@ -116,6 +95,29 @@ public class FragmentAgregarVenta extends Fragment {
         TableLayout tableLayoutResumen = vista.findViewById(R.id.FAV_tableL_resumen);
         buttonRegistrarVenta = vista.findViewById(R.id.FAV_button_registrar);
         buttonRegistrarVenta.setEnabled(false);
+        buttonAgregarAResumen = vista.findViewById(R.id.FAV_button_aResumen);
+        buttonLimpiarResumen = vista.findViewById(R.id.FAV_button_limpiarResumen);
+
+
+        //asignando funciones a botones en pantalla
+        buttonAgregarAResumen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAgregarAResumen(v);
+            }
+        });
+        buttonRegistrarVenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickRegistrarVenta(v);
+            }
+        });
+        buttonLimpiarResumen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickLimpiarResumen(v);
+            }
+        });
 
         //inicializando tabla
         String[] header = new String[]{" # ", " Producto ", " $ por unidad ", " Cliente "};
@@ -154,15 +156,30 @@ public class FragmentAgregarVenta extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
-        //cargando arrays
-        getArraysProductos();
+        cargarAutoCompletesViews();
+    }
 
-        //configurando autoCompleteCodigo
-        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+    private void cargarAutoCompletesViews(){
+
+        //OBTENIENDO ARRAYS DE LIASTA DE PRODUCTO
+        arrayCodigosProductos = new ArrayList<>();
+        arrayNombresProductos = new ArrayList<>();
+
+        for (Producto producto : listaProductos ){
+            arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
+            arrayNombresProductos.add(producto.getNombre());
+        }
+
+        //CARGANDO DATOS AUTOCOMPLETES CODIGOS Y NOMBRE
+        ArrayAdapter<String> adapterCodigos = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, arrayCodigosProductos);
         autoCCodigoProducto.setAdapter(adapterCodigos);
 
-        //al seleccionar un elemento en el autoCompleteCodigo, se complete automaticamente el codigo correspondiente en el autoCompleteNombre
+        //al seleccionar un elemento en el autoCompleteNombre, se carga automaticamente el codigo correspondiente en el autoCompleteCodigo
         autoCCodigoProducto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -190,7 +207,6 @@ public class FragmentAgregarVenta extends Fragment {
                 int n = arrayNombresProductos.indexOf(autoCNombreProducto.getText().toString());
                 autoCCodigoProducto.setText(arrayCodigosProductos.get(n));
                 enStock= listaProductos.get(n).getCantidad();
-                //chequea si hay ventas cargadas del mismo producto en el resumen para descontar del numero previsible de stock
                 for (Venta v: listaVentas){
                     if (v.getIdProducto() == Integer.parseInt(autoCCodigoProducto.getText().toString())){
                         enStock= enStock - v.getCantidad();
@@ -198,42 +214,11 @@ public class FragmentAgregarVenta extends Fragment {
 
                 }
                 textCantidadEnStock.setText(String.valueOf(enStock));
-
             }
         });
-
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-    //PROCEDIMIENTO Q CARGA LOS ARREGLOS PASADOS CON LOS NOMBRES Y CODIGOS DE LOS PRODUCTOS EN LA BDD
-    public void getArraysProductos() {
-
-        arrayCodigosProductos = new ArrayList<>();
-        arrayNombresProductos = new ArrayList<>();
-
-        for (Producto producto : listaProductos) {
-            arrayCodigosProductos.add(String.valueOf(producto.getCodigo()));
-            arrayNombresProductos.add(producto.getNombre());
-        }
-
-    }
-
-    //PROCEDIMIENTO BOTON "AGREGAR A RESUMEN"
-    public void agregarVentaAResumen(View view) {
+    public void onClickAgregarAResumen(View view) {
 
         Fecha fecha = new Fecha();
 
@@ -294,8 +279,7 @@ public class FragmentAgregarVenta extends Fragment {
         }
     }
 
-    //PROCEDIMIENTO BOTON "REGISTRAR VENTA"
-    public void registrarVenta(View view) {
+    public void onClickRegistrarVenta(View view) {
 
         for (int i = 0; i < listaVentas.size(); i++) {
 
@@ -312,8 +296,7 @@ public class FragmentAgregarVenta extends Fragment {
 
     }
 
-    //PROCEDIMIENTO BOTON "LIMPIAR RESUMEN"
-    public void limpiarResumen(View view) {
+    public void onClickLimpiarResumen(View view) {
         listaVentas.clear();
         tablaResumen.removeAllViews();
         buttonRegistrarVenta.setEnabled(false);

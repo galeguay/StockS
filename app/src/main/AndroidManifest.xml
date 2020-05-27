@@ -25,9 +25,9 @@
             android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity
             android:name=".ui.ActivityAgregarMovimiento"
-            android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <activity android:name=".ui.MainActivity">
+        <activity
+            android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

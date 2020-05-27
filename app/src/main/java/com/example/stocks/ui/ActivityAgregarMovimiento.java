@@ -33,7 +33,7 @@ public class ActivityAgregarMovimiento extends AppCompatActivity implements Frag
         fa = this;
 
         //inicializando views
-        bCompra = (Button) findViewById(R.id.bCompra);
+        bCompra = findViewById(R.id.bCompra);
         bVenta = (Button) findViewById(R.id.bVenta);
         bPrestamo = (Button) findViewById(R.id.bPrestamo);
         bDevolucion = (Button) findViewById(R.id.bDevolucion);
@@ -42,8 +42,6 @@ public class ActivityAgregarMovimiento extends AppCompatActivity implements Frag
         fragmentAgregarPrestamo = FragmentAgregarPrestamo.newInstance();
         fragmentAgregarCompra = FragmentAgregarCompra.newInstance();
         fragmentAgregarVenta = FragmentAgregarVenta.newInstance();
-        getSupportFragmentManager().beginTransaction().add(R.id.AAM_fl_contenedorFragments, fragmentAgregarPrestamo).commit();
-        getSupportFragmentManager().beginTransaction().add(R.id.AAM_fl_contenedorFragments, fragmentAgregarVenta).commit();
         getSupportFragmentManager().beginTransaction().add(R.id.AAM_fl_contenedorFragments, fragmentAgregarCompra).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.AAM_fl_contenedorFragments, FragmentAgregarCompra.newInstance()).addToBackStack(null).commit();
 
@@ -63,6 +61,12 @@ public class ActivityAgregarMovimiento extends AppCompatActivity implements Frag
     public void agregarPrestamo(View view) {
         getSupportFragmentManager().beginTransaction().replace(R.id.AAM_fl_contenedorFragments, FragmentAgregarPrestamo.newInstance()).addToBackStack(null).commit();
 
+    }
+
+    public void agregarProductoAAM(View view){
+//        fragmentAgregarCompra.agregarProductoAAM(view);
+        Intent intentAgregarProducto= new Intent(getApplicationContext(), ActivityAgregarProducto.class);
+        startActivity(intentAgregarProducto);
     }
 
     @Override

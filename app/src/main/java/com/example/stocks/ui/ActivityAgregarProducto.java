@@ -47,7 +47,7 @@ public class ActivityAgregarProducto extends AppCompatActivity {
 
         cargaListaSpinner();
 
-        Button agregarProducto = (Button) findViewById(R.id.AP_button_Agrergar);
+        Button agregarProducto = findViewById(R.id.AP_button_Agrergar);
 
         alertOk = false;
 
@@ -90,8 +90,6 @@ public class ActivityAgregarProducto extends AppCompatActivity {
     //PROCEDIMIENTO BOTON "REGISTRAR PRODUCTO"
     public void agregarProducto(View view) {
 
-        boolean checkOk = true;
-
         //los IF son chequeos de campos vacíos
         if (!editNombre.getText().toString().isEmpty()) {
             if (!editCodigo.getText().toString().isEmpty() && editCodigo.getText().toString().length() == 8) {
@@ -100,7 +98,6 @@ public class ActivityAgregarProducto extends AppCompatActivity {
                     //chequeo de nombre duplicado en una misma linea de prdocutos
                     for (Producto p : listaProductos) {
                         if (p.getNombre().equals(editNombre.getText().toString()) && p.getLinea().equals(spinnerLinea.getSelectedItem().toString())) {
-                            checkOk = false;
                             Toast.makeText(getApplicationContext(), "EN LA LINEA SELECCIONADA YA ESTÁ REGISTRADO UN PRODUCTO CON EL MISMO NOMBRE", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -130,6 +127,7 @@ public class ActivityAgregarProducto extends AppCompatActivity {
         }else{
             Toast.makeText(getApplicationContext(), "NO INGRESÓ EL NOMBRE DEL PRODUCTO", Toast.LENGTH_LONG).show();
         }
+
     }
 }
 

@@ -36,13 +36,12 @@ import java.util.ArrayList;
 import static com.example.stocks.sql.AdminBDD.APP_PAQUETE;
 import static com.example.stocks.sql.AdminBDD.NOMBRE_DB;
 
-/*
-HACER
+//TODO agregar sistema de clientes
+//TODO integrar sistema de clientes a fragmentAgregarVenta
+//TODO agregar comentarios a los movimientos?
+//TODO no permitir color blanco para objeto Linea (por mala visibilidad en la lista principal)
+//TODO mejorar el uso del Searchview
 
--corregir error de todos los movimientos con misma fecha (la del primero de cada movimiento)
--corregir impresión de ultimos movimientos en orden por fecha
-
- */
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     public static ArrayList<Linea> listaLineas;

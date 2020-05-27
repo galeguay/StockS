@@ -272,7 +272,7 @@ public class OperacionesBDD {
         dataCompra.put(Compras.ID_MOVIMIENTO, idMovimiento);
         dataCompra.put(Compras.CANTIDAD, compra.getCantidad());
         dataCompra.put(Compras.MONTO, compra.getPrecioUnitario());
-        //long succesInsert = db.insert(Tablas.COMPRAS, null, dataCompra);
+        long succesInsert = db.insert(Tablas.COMPRAS, null, dataCompra);
 
 
         //actualizando cambios en cantidad en el producto dentro de tabla productos
